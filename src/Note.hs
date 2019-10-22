@@ -1,31 +1,18 @@
 module Note where
 
 data Tone = C
-          | Cs
-          | Db
+          | CD
           | D
-          | Ds
-          | Eb
+          | DE
           | E
           | F
-          | Fs
-          | Gb
+          | FG
           | G
-          | Gs
-          | Ab
+          | GA
           | A
-          | As
-          | Bb
+          | AB
           | B
-  deriving (Read, Show, Ord)
-
-instance Eq Tone where
-  (==) Cs Db = True
-  (==) Ds Eb = True
-  (==) Fs Gb = True
-  (==) Gs Ab = True
-  (==) As Bb = True
-  (==) _  _  = False
+  deriving (Read, Show, Eq, Ord, Enum)
 
 data Note = Note OctaveCount Tone
   deriving (Read, Show, Eq, Ord)

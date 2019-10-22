@@ -24,21 +24,16 @@ data Interval = Prime
 
 halfStepsFromC :: Tone -> HalfSteps
 halfStepsFromC C  = 0
-halfStepsFromC Cs = 1
-halfStepsFromC Db = 1
+halfStepsFromC CD = 1
 halfStepsFromC D  = 2
-halfStepsFromC Ds = 3
-halfStepsFromC Eb = 3
+halfStepsFromC DE = 3
 halfStepsFromC E  = 4
 halfStepsFromC F  = 5
-halfStepsFromC Fs = 6
-halfStepsFromC Gb = 6
+halfStepsFromC FG = 6
 halfStepsFromC G  = 7
-halfStepsFromC Gs = 8
-halfStepsFromC Ab = 8
+halfStepsFromC GA = 8
 halfStepsFromC A  = 9
-halfStepsFromC As = 10
-halfStepsFromC Bb = 10
+halfStepsFromC AB = 10
 halfStepsFromC B  = 11
 
 toHalfSteps :: Interval -> HalfSteps

@@ -8,7 +8,7 @@ import Interval
 newtype Hertz = Hertz Double
   deriving (Read, Show, Eq, Ord, Num, Fractional, Floating)
 
-data Frequency = Frequency Hertz Rational
+data Frequency = Frequency Hertz Integer
                | AddFrequencies Frequency Frequency
   deriving (Read, Show, Eq, Ord)
 
@@ -36,8 +36,8 @@ standardTuning :: Tuning
 standardTuning = EqualTemperament (Hertz 440) (Note 4 A)
 
 toHertz :: Frequency -> Hertz
-toHertz (Frequency (Hertz f) r) = Hertz $ (2 ** fromRational r) * f
+toHertz (Frequency (Hertz f) r) = Hertz $ (2 ** (fromIntegral r / 12)) * f
 toHertz (AddFrequencies f1 f2) = toHertz f1 + toHertz f2
 
 fromNote :: Tuning -> Note -> Frequency
-fromNote (EqualTemperament f x) y = Frequency f $ (/12) . fromIntegral $ halfSteps x y
+fromNote (EqualTemperament f x) y = Frequency f $ halfSteps x y

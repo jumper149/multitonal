@@ -6,7 +6,7 @@ import Note
 import Interval
 
 newtype Hertz = Hertz Double
-  deriving (Read, Show, Eq, Ord, Num, Fractional, Floating)
+  deriving (Read, Show, Eq, Ord, Num, Fractional, Floating, Real, RealFrac)
 
 data Frequency = Frequency Hertz Integer
                | AddFrequencies Frequency Frequency
@@ -41,3 +41,15 @@ toHertz (AddFrequencies f1 f2) = toHertz f1 + toHertz f2
 
 fromNote :: Tuning -> Note -> Frequency
 fromNote (EqualTemperament f x) y = Frequency f $ halfSteps x y
+
+toNote :: Tuning -> Frequency -> Note
+toNote (EqualTemperament f x) (Frequency g h)
+  | f == g = undefined
+  | otherwise = undefined
+
+closestFrequency :: Tuning -> Hertz -> (Frequency , Double)
+closestFrequency (EqualTemperament f _) g = (Frequency f whole , missing)
+  where whole = round halfsteps
+        missing = halfsteps - fromIntegral whole
+        halfsteps = 12 * log quotient / log 2
+        Hertz quotient = g / f

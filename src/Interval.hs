@@ -76,6 +76,6 @@ interval :: Tone -> Tone -> Interval
 interval x y = fromHalfSteps $ halfStepsFromC y - halfStepsFromC x
 
 halfSteps :: Note -> Note -> HalfSteps
-halfSteps (Note x n) (Note y m) = ocHs + hs
+halfSteps (Note n x) (Note m y) = ocHs + hs
   where hs = toHalfSteps $ interval x y
         ocHs = octavesToHalfSteps $ m - n

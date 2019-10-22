@@ -17,7 +17,7 @@ data Tone = C
           | As
           | Bb
           | B
-  deriving (Read, Show)
+  deriving (Read, Show, Ord)
 
 instance Eq Tone where
   (==) Cs Db = True
@@ -27,7 +27,7 @@ instance Eq Tone where
   (==) As Bb = True
   (==) _  _  = False
 
-data Note = Note Tone OctaveCount
-  deriving (Read, Show, Eq)
+data Note = Note OctaveCount Tone
+  deriving (Read, Show, Eq, Ord)
 
 type OctaveCount = Integer

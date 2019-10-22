@@ -3,20 +3,20 @@ module Frequency where
 import Note
 import Interval
 
-type Hertz = Double
-
-data Frequency = Frequency Rational Hertz
+newtype Hertz = Hertz Double
   deriving (Read, Show, Eq, Ord)
 
-data Tuning = EqualTemperament Note Hertz
+data Frequency = Frequency Hertz Rational
+  deriving (Read, Show, Eq, Ord)
+
+data Tuning = EqualTemperament Hertz Note
   deriving (Read, Show, Eq)
 
 standardTuning :: Tuning
-standardTuning = EqualTemperament (Note A 4) 440
+standardTuning = EqualTemperament (Hertz 440) (Note 4 A)
 
-toHertz :: Frequency -> Double
-toHertz (Frequency r f) = (2**(fromRational r)) * f
+toHertz :: Frequency -> Hertz
+toHertz (Frequency (Hertz f) r) = Hertz $ (2**(fromRational r)) * f
 
 fromNote :: Tuning -> Note -> Frequency
-fromNote (EqualTemperament x f) y = Frequency m f
-  where m = (/12) . fromIntegral $ halfSteps x y
+fromNote (EqualTemperament f x) y = Frequency f $ (/12) . fromIntegral $ halfSteps x y

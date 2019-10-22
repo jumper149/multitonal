@@ -22,30 +22,19 @@ data Interval = Prime
               | Octave
   deriving (Read, Show, Eq, Ord, Enum)
 
-halfStepsFromC :: Tone -> HalfSteps
-halfStepsFromC C  = 0
-halfStepsFromC CD = 1
-halfStepsFromC D  = 2
-halfStepsFromC DE = 3
-halfStepsFromC E  = 4
-halfStepsFromC F  = 5
-halfStepsFromC FG = 6
-halfStepsFromC G  = 7
-halfStepsFromC GA = 8
-halfStepsFromC A  = 9
-halfStepsFromC AB = 10
-halfStepsFromC B  = 11
-
 toHalfSteps :: Interval -> HalfSteps
 toHalfSteps = toEnum . fromEnum
 
 fromHalfSteps :: HalfSteps -> Interval
 fromHalfSteps n = toEnum . fromEnum $ n `mod` 12
 
-interval :: Tone -> Tone -> Interval
-interval x y = fromHalfSteps $ halfStepsFromC y - halfStepsFromC x
+intervalTone :: Tone -> Tone -> Interval
+intervalTone x y = fromHalfSteps . toEnum $ fromEnum y - fromEnum x
 
 halfSteps :: Note -> Note -> HalfSteps
 halfSteps (Note n x) (Note m y) = ocHs + hs
-  where hs = toHalfSteps $ interval x y
+  where hs = toHalfSteps $ intervalTone x y
         ocHs = octavesToHalfSteps $ m - n
+
+interval :: Note -> Note -> Interval
+interval x y = fromHalfSteps $ halfSteps x y

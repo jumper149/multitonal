@@ -4,6 +4,7 @@ module Frequency where
 
 import Note
 import Interval
+import Ratio
 
 newtype Hertz = Hertz Double
   deriving (Read, Show, Eq, Ord, Num, Fractional, Floating, Real, RealFrac)
@@ -35,21 +36,31 @@ data Tuning = EqualTemperament Hertz Note
 standardTuning :: Tuning
 standardTuning = EqualTemperament (Hertz 440) (Note 4 A)
 
+fromNote :: Tuning -> Note -> Frequency
+fromNote (EqualTemperament f x) y = Frequency f $ halfSteps x y
+
+toNote :: Tuning -> Frequency -> Note
+toNote (EqualTemperament f x) (Frequency g h)
+  | f == g = toEnum $ fromEnum x + fromEnum h
+  | otherwise = undefined
+toNote _ _ = undefined
+
 toHertz :: Frequency -> Hertz
 toHertz (Frequency f h) = (2 ** (fromIntegral h / 12)) * f
 toHertz (AddFrequencies f1 f2) = toHertz f1 + toHertz f2
 
-fromNote :: Tuning -> Note -> Frequency
-fromNote (EqualTemperament f x) y = Frequency f $ halfSteps x y
-
---toNote :: Tuning -> Frequency -> Note
---toNote (EqualTemperament f x) (Frequency g h)
---  | f == g = undefined
---  | otherwise = undefined
-
-closestFrequency :: Tuning -> Hertz -> (Frequency , Double)
-closestFrequency (EqualTemperament f _) g = (Frequency f whole , missing)
+fromHertz :: Tuning -> Hertz -> (Frequency , Double)
+fromHertz (EqualTemperament f _) g = (Frequency f whole , missing)
   where whole = round halfsteps
         missing = halfsteps - fromIntegral whole
         halfsteps = 12 * log quotient / log 2
         Hertz quotient = g / f
+
+correctHertz :: Interval -> Hertz -> Hertz -> Hertz
+correctHertz i h1 h2 = h2Predicted - h2
+  where h2Predicted = (fromRational . fromInterval $ i) * h1
+
+correct :: Tuning -> Note -> Note -> Hertz
+correct t x y = correctHertz i (hertz x) (hertz y)
+  where i = interval x y
+        hertz = toHertz . fromNote t

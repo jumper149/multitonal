@@ -17,4 +17,9 @@ data Tone = C
 data Note = Note OctaveCount Tone
   deriving (Read, Show, Eq, Ord)
 
+instance Enum Note where
+  fromEnum (Note octave tone) = 12 * fromEnum octave + fromEnum tone
+  toEnum n = Note (toEnum octave) (toEnum tone)
+    where (octave , tone) = n `divMod` 12
+
 type OctaveCount = Integer

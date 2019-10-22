@@ -57,7 +57,7 @@ toHalfSteps MajorSeventh  = 11
 toHalfSteps Octave        = 12
 
 fromHalfSteps :: HalfSteps -> Interval
-fromHalfSteps n = case (n `mod` 12) of
+fromHalfSteps n = case n `mod` 12 of
                     0  -> Prime
                     1  -> MinorSecond
                     2  -> MajorSecond

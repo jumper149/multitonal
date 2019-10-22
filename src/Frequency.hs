@@ -15,13 +15,13 @@ data Frequency = Frequency Hertz Integer
 instance Num Frequency where
   (+) = AddFrequencies
 
-  (*) (Frequency f1 r1) (Frequency f2 r2) = Frequency (f1 * f2) (r1 + r2)
-  (*) (AddFrequencies fr1 fr2) fr3 = AddFrequencies (fr1 * fr3) (fr2 * fr3)
-  (*) fr1 (AddFrequencies fr2 fr3) = AddFrequencies (fr1 * fr2) (fr1 * fr3)
+  (*) (Frequency f1 h1) (Frequency f2 h2) = Frequency (f1 * f2) (h1 + h2)
+  (*) (AddFrequencies fh1 fh2) fh3 = AddFrequencies (fh1 * fh3) (fh2 * fh3)
+  (*) fh1 (AddFrequencies fh2 fh3) = AddFrequencies (fh1 * fh2) (fh1 * fh3)
 
-  negate fr = Frequency (-1) 0 * fr
+  negate fh = Frequency (-1) 0 * fh
 
-  signum (Frequency _ r) = Frequency 1 r
+  signum (Frequency _ h) = Frequency 1 h
   signum (AddFrequencies _ _) = undefined
 
   abs (Frequency f _) = Frequency f 0
@@ -36,7 +36,7 @@ standardTuning :: Tuning
 standardTuning = EqualTemperament (Hertz 440) (Note 4 A)
 
 toHertz :: Frequency -> Hertz
-toHertz (Frequency (Hertz f) r) = Hertz $ (2 ** (fromIntegral r / 12)) * f
+toHertz (Frequency (Hertz f) h) = Hertz $ (2 ** (fromIntegral h / 12)) * f
 toHertz (AddFrequencies f1 f2) = toHertz f1 + toHertz f2
 
 fromNote :: Tuning -> Note -> Frequency

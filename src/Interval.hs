@@ -20,7 +20,7 @@ data Interval = Prime
               | MinorSeventh
               | MajorSeventh
               | Octave
-  deriving (Read, Show, Eq, Ord)
+  deriving (Read, Show, Eq, Ord, Enum)
 
 halfStepsFromC :: Tone -> HalfSteps
 halfStepsFromC C  = 0
@@ -37,35 +37,10 @@ halfStepsFromC AB = 10
 halfStepsFromC B  = 11
 
 toHalfSteps :: Interval -> HalfSteps
-toHalfSteps Prime         = 0
-toHalfSteps MinorSecond   = 1
-toHalfSteps MajorSecond   = 2
-toHalfSteps MinorThird    = 3
-toHalfSteps MajorThird    = 4
-toHalfSteps PerfectFourth = 5
-toHalfSteps Tritone       = 6
-toHalfSteps PerfectFifth  = 7 
-toHalfSteps MinorSixth    = 8
-toHalfSteps MajorSixth    = 9
-toHalfSteps MinorSeventh  = 10
-toHalfSteps MajorSeventh  = 11
-toHalfSteps Octave        = 12
+toHalfSteps = toEnum . fromEnum
 
 fromHalfSteps :: HalfSteps -> Interval
-fromHalfSteps n = case n `mod` 12 of
-                    0  -> Prime
-                    1  -> MinorSecond
-                    2  -> MajorSecond
-                    3  -> MinorThird
-                    4  -> MajorThird
-                    5  -> PerfectFourth
-                    6  -> Tritone
-                    7  -> PerfectFifth
-                    8  -> MinorSixth
-                    9  -> MajorSixth
-                    10 -> MinorSeventh
-                    11 -> MajorSeventh
-                    _  -> undefined
+fromHalfSteps n = toEnum . fromEnum $ n `mod` 12
 
 interval :: Tone -> Tone -> Interval
 interval x y = fromHalfSteps $ halfStepsFromC y - halfStepsFromC x

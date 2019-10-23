@@ -1,6 +1,14 @@
 {-# LANGUAGE GeneralizedNewtypeDeriving #-}
 
-module Frequency where
+module Frequency ( Hertz (..) -- (..) necessary?
+                 , Tuning (..)
+                 , standardTuning
+                 , correct
+                 , toHertz
+                 , fromNote
+                 , fromHertz -- for now
+                 , toNote -- for now
+                 ) where
 
 import Note
 import Interval

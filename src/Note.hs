@@ -1,4 +1,7 @@
-module Note where
+module Note ( Tone (..)
+            , Note (..)
+            , OctaveCount -- hide?
+            ) where
 
 data Tone = C
           | CD

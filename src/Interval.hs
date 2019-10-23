@@ -1,4 +1,9 @@
-module Interval where
+module Interval ( Interval (..)
+                , interval
+                , HalfSteps -- for now
+                , SimpleInterval (..) -- for now
+                , halfSteps -- for now
+                ) where
 
 import Note
 

@@ -1,4 +1,5 @@
-module Ratio where
+module Ratio ( fromInterval
+             ) where
 
 import Interval
 

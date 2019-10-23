@@ -1,10 +1,10 @@
-module Chord where
+module Chord ( info -- needs rework
+             , showInfo -- for now
+             ) where
 
 import Note
 import Interval
 import Frequency
-
-import Data.List (intercalate)
 
 type Chord = [Note]
 
@@ -16,4 +16,4 @@ track :: Note -> Note -> ((Note,Note),(Interval,Hertz))
 track x y = ((x , y) , (interval x y , correct standardTuning x y))
 
 showInfo :: [((Note,Note),(Interval,Hertz))] -> String
-showInfo = intercalate "\n" . map show
+showInfo = unlines . map show

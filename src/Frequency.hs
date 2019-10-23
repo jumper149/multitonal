@@ -20,7 +20,8 @@ instance Num Frequency where
   (*) (AddFrequencies fh1 fh2) fh3 = AddFrequencies (fh1 * fh3) (fh2 * fh3)
   (*) fh1 (AddFrequencies fh2 fh3) = AddFrequencies (fh1 * fh2) (fh1 * fh3)
 
-  negate fh = Frequency (-1) 0 * fh
+  negate (Frequency f h) = Frequency (-f) h
+  negate (AddFrequencies fh1 fh2) = AddFrequencies (negate fh1) (negate fh2)
 
   signum (Frequency _ h) = Frequency 1 h
   signum (AddFrequencies _ _) = undefined
@@ -58,7 +59,7 @@ fromHertz (EqualTemperament f _) g = (Frequency f whole , missing)
 
 correctHertz :: Interval -> Hertz -> Hertz -> Hertz
 correctHertz i h1 h2 = h2Predicted - h2
-  where h2Predicted = (fromRational . fromInterval $ i) * h1
+  where h2Predicted = (* h1) . fromRational . fromInterval $ i
 
 correct :: Tuning -> Note -> Note -> Hertz
 correct t x y = correctHertz i (hertz x) (hertz y)

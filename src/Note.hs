@@ -3,6 +3,7 @@ module Note ( Tone (..)
             , OctaveCount -- hide?
             ) where
 
+-- | Tone on the chromatic scale.
 data Tone = C
           | CD
           | D
@@ -17,6 +18,7 @@ data Tone = C
           | B
   deriving (Read, Show, Eq, Ord, Enum, Bounded)
 
+-- | Tone on the chromatic scale with it's regarding octave.
 data Note = Note OctaveCount Tone
   deriving (Read, Eq, Ord)
 

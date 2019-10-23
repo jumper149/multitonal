@@ -14,6 +14,7 @@ import Note
 import Interval
 import Ratio
 
+-- Frequency in Hertz.
 newtype Hertz = Hertz Double
   deriving (Read, Show, Eq, Ord, Num, Fractional, Floating, Real, RealFrac)
 
@@ -69,6 +70,7 @@ correctHertz :: Interval -> Hertz -> Hertz -> Hertz
 correctHertz i h1 h2 = h2Predicted - h2
   where h2Predicted = (* h1) . fromRational . fromInterval $ i
 
+-- | Difference to the actual 'Interval', spanned by two 'Note's in 'Hertz'.
 correct :: Tuning -> Note -> Note -> Hertz
 correct t x y = correctHertz i (hertz x) (hertz y)
   where i = interval x y

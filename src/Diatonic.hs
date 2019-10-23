@@ -8,6 +8,7 @@ module Diatonic ( Mode (..)
 import Note
 import Interval
 
+-- | Mode of a diatonic scale.
 data Mode = Ionian
           | Dorian
           | Phrygian
@@ -38,6 +39,7 @@ scaleSemisteps Mixolydian = ScaleSemisteps From3To4 From6To7
 scaleSemisteps Aeolian    = ScaleSemisteps From2To3 From5To6
 scaleSemisteps Locrian    = ScaleSemisteps From1To2 From4To5
 
+-- | Diatonic scale.
 data Scale = Scale { s1 :: Tone
                    , s2 :: Tone
                    , s3 :: Tone
@@ -52,6 +54,7 @@ instance Show Scale where
   show s = unwords $ "Scale" : (show <$> tones)
     where tones = [ s1 s , s2 s , s3 s , s4 s , s5 s , s6 s , s7 s ]
 
+-- | Construct the diatonic 'Scale' from a 'Mode', by giving it's root 'Tone'.
 scale :: Mode -> Tone -> Scale
 scale m t = Scale { .. }
   where [s1,s2,s3,s4,s5,s6,s7] = toTone <$> halfstepsFromRoot

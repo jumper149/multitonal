@@ -15,13 +15,5 @@ info c1 c2 = filter f $ track <$> c1 <*> c2
 track :: Note -> Note -> ((Note,Note),(Interval,Hertz))
 track x y = ((x , y) , (interval x y , correct standardTuning x y))
 
-----------------------------
-
-chordC4Maj :: Chord
-chordC4Maj = Note 4 <$> [ C , E , G ]
-
-chordA4Maj :: Chord
-chordA4Maj = Note 4 <$> [ A , C , E ]
-
 showInfo :: [((Note,Note),(Interval,Hertz))] -> String
 showInfo = intercalate "\n" . map show

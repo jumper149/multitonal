@@ -12,10 +12,14 @@ data Tone = C
           | A
           | AB
           | B
-  deriving (Read, Show, Eq, Ord, Enum)
+  deriving (Read, Show, Eq, Ord, Enum, Bounded)
 
 data Note = Note OctaveCount Tone
-  deriving (Read, Show, Eq, Ord)
+  deriving (Read, Eq, Ord)
+
+instance Show Note where
+  show (Note octave tone) = show tone ++ (toSubscript <$> show octave)
+    where toSubscript = toEnum . (+ fromEnum '₀') . (+ (- fromEnum '0')) . fromEnum
 
 instance Enum Note where
   fromEnum (Note octave tone) = 12 * fromEnum octave + fromEnum tone

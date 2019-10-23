@@ -3,7 +3,7 @@ module Ratio where
 import Interval
 
 fromInterval :: Interval -> Rational
-fromInterval (Compound n Prime)         = 2^n * 1
+fromInterval (Compound n Prime)         = 2^n
 fromInterval (Compound n MinorSecond)   = 2^n * 16/15
 fromInterval (Compound n MajorSecond)   = 2^n * 9/8
 fromInterval (Compound n MinorThird)    = 2^n * 6/5

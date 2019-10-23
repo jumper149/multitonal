@@ -30,7 +30,7 @@ instance Enum Interval where
 
   toEnum i = Compound (toEnum n) (toEnum si)
     where maxSimple = maxBound :: SimpleInterval
-          (n , si) = (i `divMod` fromEnum maxSimple)
+          (n , si) = i `divMod` fromEnum maxSimple
 
 toHalfSteps :: Interval -> HalfSteps
 toHalfSteps = toEnum . fromEnum

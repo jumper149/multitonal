@@ -4,8 +4,7 @@ module Frequency ( Hertz (..) -- (..) necessary?
                  , Tuning (..)
                  , standardTuning
                  , correctHertz
-                 , correctCents
-                 , correctCents2
+                 , correctCent
                  , predictHertz
                  , toHertz
                  , fromNote
@@ -17,8 +16,12 @@ import Note
 import Interval
 import Ratio
 
--- Frequency in Hertz.
+-- | Frequency in Hertz.
 newtype Hertz = Hertz Double
+  deriving (Read, Show, Eq, Ord, Num, Fractional, Floating, Real, RealFrac)
+
+-- | Hundreths of 'HalfSteps'.
+newtype Cent = Cent Double
   deriving (Read, Show, Eq, Ord, Num, Fractional, Floating, Real, RealFrac)
 
 data Frequency = Frequency Hertz Integer
@@ -75,20 +78,11 @@ correctHertz t x y = predictHertz t i x - hertz y
   where hertz = toHertz . fromNote t
         i = interval x y
 
-newtype Cents = Cents Double
-  deriving (Read, Show, Eq, Ord, Num, Fractional, Floating, Real, RealFrac)
-
 -- also right
-correctCents :: Tuning -> Note -> Note -> Cents
-correctCents t x y = Cents $ 100 * 12 * log quotient / log 2
+correctCent :: Tuning -> Note -> Note -> Cent
+correctCent t x y = Cent $ 100 * 12 * log quotient / log 2
   where Hertz quotient = predictHertz t i x / hertz y
         hertz = toHertz . fromNote t
-        i = interval x y
-
--- right
-correctCents2 :: Tuning -> Note -> Note -> Cents
-correctCents2 t x y = Cents cts
-  where cts = (* 100) . snd . fromHertz t . predictHertz t i $ x
         i = interval x y
 
 predictHertz :: Tuning -> Interval -> Note -> Hertz

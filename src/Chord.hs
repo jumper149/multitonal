@@ -1,5 +1,6 @@
 module Chord ( info -- needs rework
-             , showInfo -- for now
+             , showInfotain -- for now
+             , infotain -- for now
              ) where
 
 import Note
@@ -8,12 +9,12 @@ import Frequency
 
 type Chord = [Note]
 
-info :: Chord -> Chord -> [((Note,Note),(Interval,Cent))]
-info c1 c2 = filter f $ track <$> c1 <*> c2
+infotain :: Chord -> Chord -> [((Note,Note),(Interval,Cent))]
+infotain c1 c2 = filter f $ info <$> c1 <*> c2
   where f ((x,y),_) = x < y
 
-track :: Note -> Note -> ((Note,Note),(Interval,Cent))
-track x y = ((x , y) , (interval x y , correctCent standardTuning x y))
+info :: Note -> Note -> ((Note,Note),(Interval,Cent))
+info x y = ((x , y) , (interval x y , correctCent standardTuning x y))
 
-showInfo :: [((Note,Note),(Interval,Cent))] -> String
-showInfo = unlines . map show
+showInfotain :: [((Note,Note),(Interval,Cent))] -> String
+showInfotain = unlines . map show

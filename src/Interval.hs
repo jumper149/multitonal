@@ -28,7 +28,11 @@ data SimpleInterval = Prime
   deriving (Read, Show, Eq, Ord, Enum, Bounded)
 
 data Interval = Compound OctaveCount SimpleInterval
-  deriving (Read, Show, Eq, Ord)
+  deriving (Read, Eq, Ord)
+
+instance Show Interval where
+  show (Compound n si) = concat (replicate (fromEnum n) octaveStr) ++ show si
+    where octaveStr = show Octave ++ "+"
 
 instance Enum Interval where
   fromEnum (Compound n si) = fromEnum n * fromEnum (maxBound :: SimpleInterval) + fromEnum si

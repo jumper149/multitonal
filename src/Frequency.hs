@@ -19,11 +19,17 @@ import Ratio
 
 -- | Frequency in Hertz.
 newtype Hertz = Hertz Double
-  deriving (Read, Show, Eq, Ord, Num, Fractional, Floating, Real, RealFrac)
+  deriving (Read, Eq, Ord, Num, Fractional, Floating, Real, RealFrac)
+
+instance Show Hertz where
+  show f = (show . (round :: Hertz -> Integer)) f ++ "Hz"
 
 -- | Hundreths of 'HalfSteps'.
 newtype Cent = Cent Double
-  deriving (Read, Show, Eq, Ord, Num, Fractional, Floating, Real, RealFrac)
+  deriving (Read, Eq, Ord, Num, Fractional, Floating, Real, RealFrac)
+
+instance Show Cent where
+  show ct = (show . (round :: Cent -> Integer)) ct ++ "ct"
 
 data Frequency = Frequency Hertz Integer
                | AddFrequencies Frequency Frequency

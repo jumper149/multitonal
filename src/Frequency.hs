@@ -3,7 +3,8 @@
 module Frequency ( Hertz (..) -- (..) necessary?
                  , Tuning (..)
                  , standardTuning
-                 , correct
+                 , correctHertz
+                 , correctCents
                  , toHertz
                  , fromNote
                  , fromHertz -- for now
@@ -66,12 +67,22 @@ fromHertz (EqualTemperament f _) g = (Frequency f whole , missing)
         halfsteps = 12 * log quotient / log 2
         Hertz quotient = g / f
 
-correctHertz :: Interval -> Hertz -> Hertz -> Hertz
-correctHertz i h1 h2 = h2Predicted - h2
-  where h2Predicted = (* h1) . fromRational . fromInterval $ i
-
 -- | Difference to the actual 'Interval', spanned by two 'Note's in 'Hertz'.
-correct :: Tuning -> Note -> Note -> Hertz
-correct t x y = correctHertz i (hertz x) (hertz y)
-  where i = interval x y
+correctHertz :: Tuning -> Note -> Note -> Hertz
+correctHertz t x y = predictHertz t i x - hertz y
+  where hertz = toHertz . fromNote t
+        i = interval x y
+
+newtype Cents = Cents Double
+  deriving (Read, Show, Eq, Ord, Num, Fractional, Floating, Real, RealFrac)
+
+correctCents :: Tuning -> Note -> Note -> Cents
+correctCents t x y = Cents $ 12 * log quotient / log 2 - (fromInteger . (toEnum :: Int -> HalfSteps) . fromEnum) i
+  where Hertz quotient = predictHertz t i x / hertz y
+        hertz = toHertz . fromNote t
+        i = interval x y
+
+predictHertz :: Tuning -> Interval -> Note -> Hertz
+predictHertz t i x = predicted
+  where predicted = (* hertz x) . fromRational . fromInterval $ i
         hertz = toHertz . fromNote t

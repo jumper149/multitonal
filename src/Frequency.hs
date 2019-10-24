@@ -5,6 +5,8 @@ module Frequency ( Hertz (..) -- (..) necessary?
                  , standardTuning
                  , correctHertz
                  , correctCents
+                 , correctCents2
+                 , predictHertz
                  , toHertz
                  , fromNote
                  , fromHertz -- for now
@@ -76,13 +78,18 @@ correctHertz t x y = predictHertz t i x - hertz y
 newtype Cents = Cents Double
   deriving (Read, Show, Eq, Ord, Num, Fractional, Floating, Real, RealFrac)
 
+-- also right
 correctCents :: Tuning -> Note -> Note -> Cents
-correctCents t x y = Cents $ 12 * log quotient / log 2 - (fromInteger . (toEnum :: Int -> HalfSteps) . fromEnum) i
+correctCents t x y = Cents $ 100 * 12 * log quotient / log 2
   where Hertz quotient = predictHertz t i x / hertz y
         hertz = toHertz . fromNote t
         i = interval x y
 
+-- right
+correctCents2 :: Tuning -> Note -> Note -> Cents
+correctCents2 t x y = Cents cts
+  where cts = (* 100) . snd . fromHertz t . predictHertz t i $ x
+        i = interval x y
+
 predictHertz :: Tuning -> Interval -> Note -> Hertz
-predictHertz t i x = predicted
-  where predicted = (* hertz x) . fromRational . fromInterval $ i
-        hertz = toHertz . fromNote t
+predictHertz t i x = (* (toHertz . fromNote t) x) . fromRational . fromInterval $ i

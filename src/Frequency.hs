@@ -1,6 +1,7 @@
 {-# LANGUAGE GeneralizedNewtypeDeriving #-}
 
 module Frequency ( Hertz (..) -- (..) necessary?
+                 , Cent (..) -- (..) necessary?
                  , Tuning (..)
                  , standardTuning
                  , correctHertz

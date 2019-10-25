@@ -1,4 +1,5 @@
-module Polytone where
+module Polytone ( fromChord
+                ) where
 
 import Note
 import Chord
@@ -13,14 +14,16 @@ instance Show Polytone where
   show (Polytone s) = "Polytone " ++ unwords (show <$> S.toList s)
 
 fromChord :: OctaveCount -> Chord -> Polytone
-fromChord n (Chord (root NE.:| rest)) = Polytone . S.fromList $ rootTone : ascendingTone rootTone rest
+fromChord n c = Polytone . S.fromList $ ascendingTone rootTone rest
   where rootTone = Tone n root
+        root NE.:| rest = toNonEmpty c
 
 ascendingTone :: Tone -> [Note] -> [Tone]
-ascendingTone _ [] = []
-ascendingTone (Tone n prev) (t:ts) = next : ascendingTone next ts
-  where next = if Tone n prev <= lower
+ascendingTone prev []     = [ prev ]
+ascendingTone prev (n:ns) = prev : ascendingTone next ns
+  where next = if prev <= lower
                then lower
                else higher
-        lower = Tone n t
-        higher = Tone (n + 1) t
+        higher = Tone (i + 1) n
+        lower = Tone i n
+        Tone i _ = prev

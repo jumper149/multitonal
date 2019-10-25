@@ -3,6 +3,7 @@ module Chord ( Chord
              , Function (..)
              , triad
              , seventh
+             , ninth
              , stackThirds
              ) where
 
@@ -27,16 +28,21 @@ data Function = Tonic
               | Dominant
               | Submediant
               | Leading
-  deriving (Read, Show, Eq, Ord, Enum)
+  deriving (Read, Show, Eq, Ord, Enum, Bounded)
 
 triad :: Mode -> Function -> Note -> Chord
-triad m f n = Chord $ (NE.fromList . take 3 . function) f <*> pure (scale m n)
+triad = stackThirds 3
 
 seventh :: Mode -> Function -> Note -> Chord
-seventh m f n = Chord $ (NE.fromList . take 4 . function) f <*> pure (scale m n)
+seventh = stackThirds 4
+
+ninth :: Mode -> Function -> Note -> Chord
+ninth = stackThirds 5
 
 stackThirds :: Int -> Mode -> Function -> Note -> Chord
-stackThirds i m f n = Chord $ (NE.fromList . take i . function) f <*> pure (scale m n)
+stackThirds i m f n
+  | i > 0 = Chord $ (NE.fromList . take i . function) f <*> pure (scale m n)
+  | otherwise = undefined
 
 -- | Return an infinite list of functions that access stacked thirds from a 'Scale'.
 function :: Function -> [Scale -> Note]

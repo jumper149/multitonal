@@ -8,9 +8,9 @@ module Frequency ( Hertz (..) -- (..) necessary?
                  , correctCent
                  , predictHertz
                  , toHertz
-                 , fromNote
+                 , fromTone
                  , fromHertz -- for now
-                 , toNote -- for now
+                 , toTone -- for now
                  ) where
 
 import Note
@@ -53,20 +53,20 @@ instance Num Frequency where
 
   fromInteger i = Frequency (fromInteger i) 0
 
-data Tuning = EqualTemperament Hertz Note
+data Tuning = EqualTemperament Hertz Tone
   deriving (Read, Show, Eq)
 
 standardTuning :: Tuning
-standardTuning = EqualTemperament (Hertz 440) (Note 4 A)
+standardTuning = EqualTemperament (Hertz 440) (Tone 4 A)
 
-fromNote :: Tuning -> Note -> Frequency
-fromNote (EqualTemperament f x) y = Frequency f $ halfSteps x y
+fromTone :: Tuning -> Tone -> Frequency
+fromTone (EqualTemperament f x) y = Frequency f $ halfSteps x y
 
-toNote :: Tuning -> Frequency -> Note
-toNote (EqualTemperament f x) (Frequency g h)
+toTone :: Tuning -> Frequency -> Tone
+toTone (EqualTemperament f x) (Frequency g h)
   | f == g = toEnum $ fromEnum x + fromEnum h
   | otherwise = undefined
-toNote _ _ = undefined
+toTone _ _ = undefined
 
 toHertz :: Frequency -> Hertz
 toHertz (Frequency f h) = (2 ** (fromIntegral h / 12)) * f
@@ -79,18 +79,18 @@ fromHertz (EqualTemperament f _) g = (Frequency f whole , missing)
         halfsteps = 12 * log quotient / log 2
         Hertz quotient = g / f
 
--- | Difference to the actual 'Interval', spanned by two 'Note's in 'Hertz'.
-correctHertz :: Tuning -> Note -> Note -> Hertz
+-- | Difference to the actual 'Interval', spanned by two 'Tone's in 'Hertz'.
+correctHertz :: Tuning -> Tone -> Tone -> Hertz
 correctHertz t x y = predictHertz t i x - hertz y
-  where hertz = toHertz . fromNote t
+  where hertz = toHertz . fromTone t
         i = interval x y
 
 -- also right
-correctCent :: Tuning -> Note -> Note -> Cent
+correctCent :: Tuning -> Tone -> Tone -> Cent
 correctCent t x y = Cent $ 100 * 12 * log quotient / log 2
   where Hertz quotient = predictHertz t i x / hertz y
-        hertz = toHertz . fromNote t
+        hertz = toHertz . fromTone t
         i = interval x y
 
-predictHertz :: Tuning -> Interval -> Note -> Hertz
-predictHertz t i x = (* (toHertz . fromNote t) x) . fromRational . fromInterval $ i
+predictHertz :: Tuning -> Interval -> Tone -> Hertz
+predictHertz t i x = (* (toHertz . fromTone t) x) . fromRational . fromInterval $ i

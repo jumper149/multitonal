@@ -47,13 +47,13 @@ toHalfSteps = toEnum . fromEnum
 fromHalfSteps :: HalfSteps -> Interval
 fromHalfSteps = toEnum . fromEnum
 
-intervalTone :: Tone -> Tone -> Interval
-intervalTone x y = fromHalfSteps . toEnum $ fromEnum y - fromEnum x
+intervalNote :: Note -> Note -> Interval
+intervalNote x y = fromHalfSteps . toEnum $ fromEnum y - fromEnum x
 
-halfSteps :: Note -> Note -> HalfSteps
-halfSteps (Note n x) (Note m y) = ocHs + hs
-  where hs = toHalfSteps $ intervalTone x y
+halfSteps :: Tone -> Tone -> HalfSteps
+halfSteps (Tone n x) (Tone m y) = ocHs + hs
+  where hs = toHalfSteps $ intervalNote x y
         ocHs = octavesToHalfSteps $ m - n
 
-interval :: Note -> Note -> Interval
+interval :: Tone -> Tone -> Interval
 interval x y = fromHalfSteps $ halfSteps x y

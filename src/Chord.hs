@@ -2,9 +2,9 @@ module Chord ( info -- needs rework
              , showInfotain -- for now
              , infotain -- for now
              , tonicTriad
-             , tonicTriadNote
+             , tonicTriadTone
              , tonicSeventh
-             , tonicSeventhNote
+             , tonicSeventhTone
              ) where
 
 import Note
@@ -15,48 +15,48 @@ import Diatonic
 import qualified Data.List.NonEmpty as NE
 import qualified Data.Set as S
 
-newtype Chord = Chord (NE.NonEmpty Tone)
+newtype Chord = Chord (NE.NonEmpty Note)
   deriving (Read, Eq)
 
 instance Show Chord where
   show (Chord ne) = "Chord " ++ unwords (show <$> NE.toList ne)
 
-newtype Polytone = Polytone (S.Set Note)
+newtype Polytone = Polytone (S.Set Tone)
   deriving (Read, Eq)
 
 instance Show Polytone where
   show (Polytone s) = "Polytone " ++ unwords (show <$> S.toList s)
 
-infotain :: [Note] -> [Note] -> [((Note,Note),(Interval,Cent))]
+infotain :: [Tone] -> [Tone] -> [((Tone,Tone),(Interval,Cent))]
 infotain c1 c2 = info <$> c1 <*> c2
 
-info :: Note -> Note -> ((Note,Note),(Interval,Cent))
+info :: Tone -> Tone -> ((Tone,Tone),(Interval,Cent))
 info x y = ((x , y) , (interval x y , correctCent standardTuning x y))
 
-showInfotain :: [((Note,Note),(Interval,Cent))] -> String
+showInfotain :: [((Tone,Tone),(Interval,Cent))] -> String
 showInfotain = unlines . map show
 
-tonicTriad :: Mode -> Tone -> Chord
+tonicTriad :: Mode -> Note -> Chord
 tonicTriad m t = Chord $ s1 NE.:| [ s3 , s5 ] <*> pure (scale m t)
 
-tonicTriadNote :: Mode -> Note -> Polytone
-tonicTriadNote m (Note n t) = Polytone . S.fromList $ rootNote : ascendingNote rootNote rest
-  where rootNote = Note n root
+tonicTriadTone :: Mode -> Tone -> Polytone
+tonicTriadTone m (Tone n t) = Polytone . S.fromList $ rootTone : ascendingTone rootTone rest
+  where rootTone = Tone n root
         Chord (root NE.:| rest) = tonicTriad m t
 
-tonicSeventh :: Mode -> Tone -> Chord
+tonicSeventh :: Mode -> Note -> Chord
 tonicSeventh m t = Chord $ s1 NE.:| [ s3 , s5 , s7 ] <*> pure (scale m t)
 
-tonicSeventhNote :: Mode -> Note -> Polytone
-tonicSeventhNote m (Note n t) = Polytone . S.fromList $ rootNote : ascendingNote rootNote rest
-  where rootNote = Note n root
+tonicSeventhTone :: Mode -> Tone -> Polytone
+tonicSeventhTone m (Tone n t) = Polytone . S.fromList $ rootTone : ascendingTone rootTone rest
+  where rootTone = Tone n root
         Chord (root NE.:| rest) = tonicSeventh m t
 
-ascendingNote :: Note -> [Tone] -> [Note]
-ascendingNote _ [] = []
-ascendingNote (Note n prev) (t:ts) = next : ascendingNote next ts
-  where next = if Note n prev <= lower
+ascendingTone :: Tone -> [Note] -> [Tone]
+ascendingTone _ [] = []
+ascendingTone (Tone n prev) (t:ts) = next : ascendingTone next ts
+  where next = if Tone n prev <= lower
                then lower
                else higher
-        lower = Note n t
-        higher = Note (n + 1) t
+        lower = Tone n t
+        higher = Tone (n + 1) t

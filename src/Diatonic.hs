@@ -40,13 +40,13 @@ scaleSemisteps Aeolian    = ScaleSemisteps From2To3 From5To6
 scaleSemisteps Locrian    = ScaleSemisteps From1To2 From4To5
 
 -- | Diatonic scale.
-data Scale = Scale { s1 :: Tone
-                   , s2 :: Tone
-                   , s3 :: Tone
-                   , s4 :: Tone
-                   , s5 :: Tone
-                   , s6 :: Tone
-                   , s7 :: Tone
+data Scale = Scale { s1 :: Note
+                   , s2 :: Note
+                   , s3 :: Note
+                   , s4 :: Note
+                   , s5 :: Note
+                   , s6 :: Note
+                   , s7 :: Note
                    }
   deriving (Read, Eq)
 
@@ -54,11 +54,11 @@ instance Show Scale where
   show s = unwords $ "Scale" : (show <$> tones)
     where tones = [ s1 s , s2 s , s3 s , s4 s , s5 s , s6 s , s7 s ]
 
--- | Construct the diatonic 'Scale' from a 'Mode', by giving it's root 'Tone'.
-scale :: Mode -> Tone -> Scale
+-- | Construct the diatonic 'Scale' from a 'Mode', by giving it's root 'Note'.
+scale :: Mode -> Note -> Scale
 scale m t = Scale { .. }
-  where [s1,s2,s3,s4,s5,s6,s7] = toTone <$> halfstepsFromRoot
-        toTone = toEnum . (`mod` (fromEnum (maxBound :: Tone) + 1)) . (+ fromEnum t) . fromEnum
+  where [s1,s2,s3,s4,s5,s6,s7] = toNote <$> halfstepsFromRoot
+        toNote = toEnum . (`mod` (fromEnum (maxBound :: Note) + 1)) . (+ fromEnum t) . fromEnum
         halfstepsFromRoot = [ sum . take n $ semisteps | n <- [ 0 .. 6 ] ]
         semisteps = insertSemistep trans2 . insertSemistep trans1 $ wholesteps
         wholesteps = repeat (2 :: HalfSteps)

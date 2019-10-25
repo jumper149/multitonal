@@ -8,6 +8,8 @@ module Diatonic ( Mode (..)
 import Note
 import Interval
 
+import Data.List (sort)
+
 -- | Mode of a diatonic scale.
 data Mode = Ionian
           | Dorian
@@ -16,7 +18,7 @@ data Mode = Ionian
           | Mixolydian
           | Aeolian
           | Locrian
-  deriving (Read, Show, Eq, Ord, Enum)
+  deriving (Read, Show, Eq, Ord, Enum, Bounded)
 
 data Transition = From1To2
                 | From2To3
@@ -31,13 +33,11 @@ data Transition = From1To2
 data ScaleSemisteps = ScaleSemisteps Transition Transition
 
 scaleSemisteps :: Mode -> ScaleSemisteps
-scaleSemisteps Ionian     = ScaleSemisteps From3To4 From7To8
-scaleSemisteps Dorian     = ScaleSemisteps From2To3 From6To7
-scaleSemisteps Phrygian   = ScaleSemisteps From1To2 From5To6
-scaleSemisteps Lydian     = ScaleSemisteps From4To5 From7To8
-scaleSemisteps Mixolydian = ScaleSemisteps From3To4 From6To7
-scaleSemisteps Aeolian    = ScaleSemisteps From2To3 From5To6
-scaleSemisteps Locrian    = ScaleSemisteps From1To2 From4To5
+scaleSemisteps m = ScaleSemisteps fstHs sndHs
+  where [ fstHs , sndHs ] = sort $ shift <$> ionianHs
+        ionianHs = [ From3To4 , From7To8 ]
+        shift = toEnum . limit . (+ (- fromEnum m)) . fromEnum
+        limit = (`mod` (fromEnum (maxBound :: Transition) + 1))
 
 -- | Diatonic scale.
 data Scale = Scale { s1 :: Note
@@ -52,7 +52,7 @@ data Scale = Scale { s1 :: Note
 
 instance Show Scale where
   show s = unwords $ "Scale" : (show <$> tones)
-    where tones = [ s1 s , s2 s , s3 s , s4 s , s5 s , s6 s , s7 s ]
+    where tones = [ s1 , s2 , s3 , s4 , s5 , s6 , s7 ] <*> [ s ]
 
 -- | Construct the diatonic 'Scale' from a 'Mode', by giving it's root 'Note'.
 scale :: Mode -> Note -> Scale

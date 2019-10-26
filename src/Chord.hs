@@ -18,6 +18,9 @@ newtype Chord = Chord (NE.NonEmpty Note)
 instance Show Chord where
   show (Chord ne) = "Chord " ++ unwords (show <$> NE.toList ne)
 
+instance Transposable Chord where
+  mapTone f (Chord ne) = Chord $ mapTone f <$> ne
+
 toNonEmpty :: Chord -> NE.NonEmpty Note
 toNonEmpty (Chord ne) = ne
 

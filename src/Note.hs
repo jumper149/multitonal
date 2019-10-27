@@ -24,18 +24,18 @@ data Note = C
 instance Transposable Note where
   transpose i = toEnum . (`mod` (fromEnum (maxBound :: Note) + 1)) . (+ i) . fromEnum
 
+infix 5 :-
 -- | Note on the chromatic scale with it's regarding octave.
-data Tone = Tone Int  -- ^ ocvtave count
-                 Note
+data Tone = Note :- Int
   deriving (Read, Eq, Ord)
 
 instance Show Tone where
-  show (Tone octave tone) = show tone ++ (toSubscript <$> show octave)
+  show (tone :- octave) = show tone ++ (toSubscript <$> show octave)
     where toSubscript = toEnum . (+ fromEnum '₀') . (+ (- fromEnum '0')) . fromEnum
 
 instance Enum Tone where
-  fromEnum (Tone octave tone) = 12 * fromEnum octave + fromEnum tone
-  toEnum n = Tone (toEnum octave) (toEnum tone)
+  fromEnum (tone :- octave) = 12 * fromEnum octave + fromEnum tone
+  toEnum n = toEnum tone :- toEnum octave
     where (octave , tone) = n `divMod` 12
 
 instance Transposable Tone where

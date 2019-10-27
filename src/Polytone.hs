@@ -17,7 +17,7 @@ fromChord :: Int      -- ^ octave count
           -> Chord
           -> Polytone
 fromChord n c = Polytone . S.fromList $ ascendingTone rootTone rest
-  where rootTone = Tone n root
+  where rootTone = root :- n
         root NE.:| rest = toNonEmpty c
 
 ascendingTone :: Tone -> [Note] -> [Tone]
@@ -26,6 +26,6 @@ ascendingTone prev (n:ns) = prev : ascendingTone next ns
   where next = if prev < lower
                then lower
                else higher
-        higher = Tone (i + 1) n
-        lower = Tone i n
-        Tone i _ = prev
+        higher = n :- i + 1
+        lower = n :- i
+        _ :- i = prev

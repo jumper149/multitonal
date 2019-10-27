@@ -36,11 +36,11 @@ standardTuning = EqualTemperament 440
 -- | Return the 'Frequency' of a 'Tone' in a specific 'Tuning'.
 toFrequency :: Tuning -> Tone -> Frequency
 toFrequency (EqualTemperament a) t = a * 2 ** (hs / 12)
-  where hs = fromIntegral $ fromEnum t - fromEnum (Tone 4 A)
+  where hs = fromIntegral $ fromEnum t - fromEnum (A :- 4)
 
 -- | Return the closest 'Tone' and the distance to the actual 'Frequency' in 'Cent'.
 fromFrequency :: Tuning -> Frequency -> (Tone , Cent)
-fromFrequency (EqualTemperament a) h = (transpose wholeHs $ Tone 4 A , Cent $ 100 * missingHs)
+fromFrequency (EqualTemperament a) h = (transpose wholeHs $ A :- 4 , Cent $ 100 * missingHs)
   where wholeHs = round hs
         missingHs = hs - fromIntegral wholeHs
         hs = 12 * log quotient / log 2

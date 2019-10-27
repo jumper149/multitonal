@@ -5,18 +5,39 @@ module Chord ( Chord
              , seventh
              , ninth
              , stackThirds
+             , showChord -- improve later
              ) where
 
 import Note
 import Diatonic
+import Interval
 
 import qualified Data.List.NonEmpty as NE
+import Data.Char ( toLower
+                 , toUpper
+                 )
 
 newtype Chord = Chord (NE.NonEmpty Note)
   deriving (Read, Eq)
 
 instance Show Chord where
   show (Chord ne) = "Chord " ++ unwords (show <$> NE.toList ne)
+
+showChord :: Chord -> String
+showChord (Chord (root NE.:| rest)) = if weird
+                                      then show (Chord (root NE.:| rest))
+                                      else base ++ seven
+  where minor = if transpose (fromEnum MinorThird) root `elem` rest
+                then fmap toLower
+                else fmap toUpper
+        base = minor $ show root
+        seven
+          | transpose (fromEnum MinorSeventh) root `elem` rest = "7"
+          | transpose (fromEnum MajorSeventh) root `elem` rest = "maj7"
+          | otherwise = ""
+        weird = notElem (transpose (fromEnum PerfectFifth) root) rest
+             || (notElem (transpose (fromEnum MinorThird) root) rest && notElem (transpose (fromEnum MajorThird) root) rest)
+             || length rest > 3
 
 instance Transposable Chord where
   transpose n (Chord ne) = Chord $ transpose n <$> ne

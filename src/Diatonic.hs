@@ -6,7 +6,6 @@ module Diatonic ( Mode (..)
                 ) where
 
 import Note
-import Interval
 
 -- | Mode of a diatonic scale.
 data Mode = Ionian
@@ -17,10 +16,6 @@ data Mode = Ionian
           | Aeolian
           | Locrian
   deriving (Read, Show, Eq, Ord, Enum, Bounded)
-
-scaleSemisteps :: Mode -> [HalfSteps]
-scaleSemisteps m = take (length ionianHs) . drop (fromEnum m) $ cycle ionianHs
-  where ionianHs = [ 2 , 2 , 1 , 2 , 2 , 2 , 1 ]
 
 -- | Diatonic scale.
 data Scale = Scale { s1 :: Note
@@ -51,7 +46,10 @@ instance Transposable Scale where
 -- | Construct the diatonic 'Scale' from a 'Mode', by giving it's root 'Note'.
 scale :: Mode -> Note -> Scale
 scale m t = Scale { .. }
-  where [s1,s2,s3,s4,s5,s6,s7] = toNote <$> halfstepsFromRoot
-        toNote = toEnum . (`mod` (fromEnum (maxBound :: Note) + 1)) . (+ fromEnum t) . fromEnum
+  where [s1,s2,s3,s4,s5,s6,s7] = transpose <$> halfstepsFromRoot <*> pure t
         halfstepsFromRoot = [ sum . take n $ semisteps | n <- [ 0 .. length semisteps - 1 ] ]
         semisteps = scaleSemisteps m
+
+scaleSemisteps :: Mode -> [Int]
+scaleSemisteps m = take (length ionianHs) . drop (fromEnum m) $ cycle ionianHs
+  where ionianHs = [ 2 , 2 , 1 , 2 , 2 , 2 , 1 ]

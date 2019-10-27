@@ -1,6 +1,7 @@
 module Interval ( Interval (..)
                 , SimpleInterval (..) -- for now
                 , ratio
+                , interval
                 ) where
 
 data SimpleInterval = MinorSecond
@@ -50,3 +51,15 @@ ratio :: Interval -> Rational
 ratio Prime = 1
 ratio (i :+: si)   = ratio i * simpleRatio si
 ratio (i :-: si)   = ratio i / simpleRatio si
+
+-- | Returns the 'Interval' corresponding to the given amount of semisteps.
+interval :: Int      -- ^ semisteps
+         -> Interval
+interval n
+  | abs n <= fromEnum (maxBound :: SimpleInterval) =
+    if n == 0
+    then Prime
+    else if n > 0
+         then Prime :+: toEnum (n - 1)
+         else Prime :+: toEnum (-n + 1)
+  | otherwise = undefined

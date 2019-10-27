@@ -42,9 +42,11 @@ data Interval = Prime
 instance Show Interval where
   show Prime = "Prime"
   show (si :+: Prime) = show si
-  show (si :-: Prime) = show si
   show (si :+: i) = show i ++ " + " ++ show si
-  show (si :-: i) = show i ++ " - " ++ show si
+  show (si :-: i) = neg <$> show (si :+: i)
+    where neg '+' = '-'
+          neg '-' = '+'
+          neg x = x
 
 ratio :: Interval -> Rational
 ratio Prime = 1

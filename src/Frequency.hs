@@ -4,13 +4,9 @@ module Frequency ( Hertz (..) -- (..) necessary?
                  , Cent (..) -- (..) necessary?
                  , Tuning (..)
                  , standardTuning
-                 , correctHertz
                  , correctCent
-                 , predictHertz
                  , toHertz
-                 , fromTone
-                 , fromHertz -- for now
-                 , toTone -- for now
+                 , fromHertz
                  ) where
 
 import Note
@@ -31,48 +27,35 @@ newtype Cent = Cent Double
 instance Show Cent where
   show ct = (show . (round :: Cent -> Integer)) ct ++ "ct"
 
-data Frequency = Frequency Hertz Integer
-               | AddFrequencies Frequency Frequency
+data IntonatedTone = Intonated Tuning Tone
   deriving (Read, Show)
 
-data Tuning = EqualTemperament Hertz Tone
+-- | Intonation of each Tone on the chromatic scale.
+newtype Tuning = EqualTemperament Hertz -- ^ equal temperament with concert pitch given by the 'Frequency' of @A₄@
   deriving (Read, Show, Eq)
 
 standardTuning :: Tuning
-standardTuning = EqualTemperament (Hertz 440) (Tone 4 A)
+standardTuning = EqualTemperament $ Hertz 440
 
-fromTone :: Tuning -> Tone -> Frequency
-fromTone (EqualTemperament f x) y = Frequency f $ halfSteps x y
+toHertz :: IntonatedTone -> Hertz
+toHertz (EqualTemperament a `Intonated` t) = a * 2 ** (hs / 12)
+  where hs = fromIntegral $ fromEnum t - fromEnum (Tone 4 A)
 
-toTone :: Tuning -> Frequency -> Tone
-toTone (EqualTemperament f x) (Frequency g h)
-  | f == g = toEnum $ fromEnum x + fromEnum h
-  | otherwise = undefined
-toTone _ _ = undefined
+fromHertz :: Tuning -> Hertz -> (IntonatedTone , Cent)
+fromHertz (EqualTemperament a) h = (EqualTemperament a `Intonated` t , ct)
+  where t = transpose wholeHs $ Tone 4 A
+        ct = Cent . (100 *) $ missingHs
+        wholeHs = round hs
+        missingHs = hs - fromIntegral wholeHs
+        hs = 12 * log quotient / log 2
+        Hertz quotient = h / a
 
-toHertz :: Frequency -> Hertz
-toHertz (Frequency f h) = (2 ** (fromIntegral h / 12)) * f
-toHertz (AddFrequencies f1 f2) = toHertz f1 + toHertz f2
-
-fromHertz :: Tuning -> Hertz -> (Frequency , Double)
-fromHertz (EqualTemperament f _) g = (Frequency f whole , missing)
-  where whole = round halfsteps
-        missing = halfsteps - fromIntegral whole
-        halfsteps = 12 * log quotient / log 2
-        Hertz quotient = g / f
-
--- | Difference to the actual 'Interval', spanned by two 'Tone's in 'Hertz'.
-correctHertz :: Tuning -> Tone -> Tone -> Hertz
-correctHertz t x y = predictHertz t i x - hertz y
-  where hertz = toHertz . fromTone t
-        i = interval x y
-
--- also right
+-- | Difference to the actual 'Interval', spanned by two 'Tone's in 'Cent's.
 correctCent :: Tuning -> Tone -> Tone -> Cent
 correctCent t x y = Cent $ 100 * 12 * log quotient / log 2
-  where Hertz quotient = predictHertz t i x / hertz y
-        hertz = toHertz . fromTone t
-        i = interval x y
+  where Hertz quotient = xHz / yHz
+        xHz = predictHertz t (interval x y) x
+        yHz = toHertz . Intonated t $ y
 
 predictHertz :: Tuning -> Interval -> Tone -> Hertz
-predictHertz t i x = (* (toHertz . fromTone t) x) . fromRational . fromInterval $ i
+predictHertz t i x = (* (toHertz . Intonated t) x) . fromRational . fromInterval $ i

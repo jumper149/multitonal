@@ -4,9 +4,9 @@ module Frequency ( Frequency
                  , Cent
                  , Tuning
                  , standardTuning
-                 , correctCent
                  , toFrequency
                  , fromFrequency
+                 , correctCent
                  ) where
 
 import Note

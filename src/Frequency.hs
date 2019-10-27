@@ -33,25 +33,7 @@ instance Show Cent where
 
 data Frequency = Frequency Hertz Integer
                | AddFrequencies Frequency Frequency
-  deriving (Read, Show, Eq, Ord)
-
-instance Num Frequency where
-  (+) = AddFrequencies
-
-  (*) (Frequency f1 h1) (Frequency f2 h2) = Frequency (f1 * f2) (h1 + h2)
-  (*) (AddFrequencies fh1 fh2) fh3 = AddFrequencies (fh1 * fh3) (fh2 * fh3)
-  (*) fh1 (AddFrequencies fh2 fh3) = AddFrequencies (fh1 * fh2) (fh1 * fh3)
-
-  negate (Frequency f h) = Frequency (-f) h
-  negate (AddFrequencies fh1 fh2) = AddFrequencies (negate fh1) (negate fh2)
-
-  signum (Frequency _ h) = Frequency 1 h
-  signum (AddFrequencies _ _) = undefined
-
-  abs (Frequency f _) = Frequency f 0
-  abs (AddFrequencies _ _) = undefined
-
-  fromInteger i = Frequency (fromInteger i) 0
+  deriving (Read, Show)
 
 data Tuning = EqualTemperament Hertz Tone
   deriving (Read, Show, Eq)

@@ -13,7 +13,9 @@ newtype Polytone = Polytone (S.Set Tone)
 instance Show Polytone where
   show (Polytone s) = "Polytone " ++ unwords (show <$> S.toList s)
 
-fromChord :: OctaveCount -> Chord -> Polytone
+fromChord :: Int      -- ^ octave count
+          -> Chord
+          -> Polytone
 fromChord n c = Polytone . S.fromList $ ascendingTone rootTone rest
   where rootTone = Tone n root
         root NE.:| rest = toNonEmpty c

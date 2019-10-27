@@ -52,7 +52,7 @@ correctCent t x y = Cent $ 100 * 12 * log quotient / log 2
   where Hertz quotient = xHz / yHz
         xHz = predictFrequency t i x
         yHz = toFrequency t y
-        i = toEnum $ fromEnum y - fromEnum x -- NEEDS TO BE CHANGED TODO
+        i = (Prime :+:) . toEnum $ fromEnum y - fromEnum x -- NEEDS TO BE CHANGED (mapping to all intervals) TODO
 
-predictFrequency :: Tuning -> SimpleInterval -> Tone -> Frequency
-predictFrequency t i x = (* toFrequency t x) . fromRational . simpleRatio $ i -- SHOULDNT BE simpleRatio TODO
+predictFrequency :: Tuning -> Interval -> Tone -> Frequency
+predictFrequency t i x = (* toFrequency t x) . fromRational . ratio $ i

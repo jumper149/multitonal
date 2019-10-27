@@ -1,7 +1,6 @@
 module Interval ( Interval (..)
                 , SimpleInterval (..) -- for now
                 , ratio
-                , simpleRatio -- for now
                 ) where
 
 data SimpleInterval = MinorSecond
@@ -18,30 +17,34 @@ data SimpleInterval = MinorSecond
                     | Octave
   deriving (Read, Show, Eq, Ord, Enum, Bounded)
 
+-- from https://en.wikipedia.org/wiki/Interval_(music)#Size_of_intervals_used_in_different_tuning_systems
+simpleRatio :: SimpleInterval -> Rational
+simpleRatio MinorSecond   = 16/15
+simpleRatio MajorSecond   = 9/8
+simpleRatio MinorThird    = 6/5
+simpleRatio MajorThird    = 5/4
+simpleRatio PerfectFourth = 4/3
+simpleRatio Tritone       = 45/32 -- or 25:18 ?
+simpleRatio PerfectFifth  = 3/2
+simpleRatio MinorSixth    = 8/5
+simpleRatio MajorSixth    = 5/3
+simpleRatio MinorSeventh  = 16/9
+simpleRatio MajorSeventh  = 15/8
+simpleRatio Octave        = 2
+
 data Interval = Prime
-              | Compound Interval SimpleInterval
+              | Interval :+: SimpleInterval
+              | Interval :-: SimpleInterval
   deriving (Read, Eq, Ord)
 
 instance Show Interval where
   show Prime = "Prime"
-  show (Compound Prime si) = show si
-  show (Compound i si) = show i ++ " + " ++ show si
-
-simpleRatio :: SimpleInterval -> Rational
-simpleRatio = undefined
+  show (Prime :+: si) = show si
+  show (Prime :-: si) = show si
+  show (i :+: si) = show i ++ " + " ++ show si
+  show (i :-: si) = show i ++ " - " ++ show si
 
 ratio :: Interval -> Rational
-ratio Prime                          = 1
-ratio (Compound Prime MinorSecond)   = 16/15
-ratio (Compound Prime MajorSecond)   = 9/8
-ratio (Compound Prime MinorThird)    = 6/5
-ratio (Compound Prime MajorThird)    = 5/4
-ratio (Compound Prime PerfectFourth) = 4/3
-ratio (Compound Prime Tritone)       = 45/32
-ratio (Compound Prime PerfectFifth)  = 3/2
-ratio (Compound Prime MinorSixth)    = 8/5
-ratio (Compound Prime MajorSixth)    = 5/3
-ratio (Compound Prime MinorSeventh)  = 7/4
-ratio (Compound Prime MajorSeventh)  = 15/8
-ratio (Compound Prime Octave)        = 2
-ratio _                              = undefined
+ratio Prime = 1
+ratio (i :+: si)   = ratio i * simpleRatio si
+ratio (i :-: si)   = ratio i / simpleRatio si

@@ -1,4 +1,7 @@
 module Polytone ( fromChord
+                , polyMap
+                , polyToList
+                , polyFromList
                 ) where
 
 import Note
@@ -18,7 +21,7 @@ fromChord :: Int      -- ^ octave count
           -> Polytone
 fromChord n c = Polytone . S.fromList $ ascendingTone rootTone rest
   where rootTone = root :- n
-        root NE.:| rest = toNonEmpty c
+        Chord (root NE.:| rest) = c
 
 ascendingTone :: Tone -> [Note] -> [Tone]
 ascendingTone prev []     = [ prev ]
@@ -29,3 +32,12 @@ ascendingTone prev (n:ns) = prev : ascendingTone next ns
         higher = n :- i + 1
         lower = n :- i
         _ :- i = prev
+
+polyMap :: (Tone -> Tone) -> Polytone -> Polytone
+polyMap f (Polytone s) = Polytone . S.map f $ s
+
+polyFromList :: [Tone] -> Polytone
+polyFromList = Polytone . S.fromList
+
+polyToList :: Polytone -> [Tone]
+polyToList (Polytone s) = S.toList s

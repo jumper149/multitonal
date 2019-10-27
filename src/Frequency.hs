@@ -2,7 +2,7 @@
 
 module Frequency ( Frequency
                  , Cent
-                 , Tuning (..)
+                 , Tuning
                  , standardTuning
                  , correctCent
                  , toFrequency
@@ -20,7 +20,7 @@ newtype Frequency = Hertz Double
 instance Show Frequency where
   show f = (show . (round :: Frequency -> Integer)) f ++ "Hz"
 
--- | Hundreths of 'HalfSteps'.
+-- | Hundreths of semisteps on the chromatic scale.
 newtype Cent = Cent Double
   deriving (Read, Eq, Ord, Num, Fractional, Floating, Real, RealFrac)
 
@@ -34,11 +34,12 @@ newtype Tuning = EqualTemperament Frequency -- ^ equal temperament with concert 
 standardTuning :: Tuning
 standardTuning = EqualTemperament 440
 
+-- | Return the 'Frequency' of a 'Tone' in a specific 'Tuning'.
 toFrequency :: Tuning -> Tone -> Frequency
 toFrequency (EqualTemperament a) t = a * 2 ** (hs / 12)
   where hs = fromIntegral $ fromEnum t - fromEnum (Tone 4 A)
 
--- | Return the closest 'Tone' and the distance to the actual 'Frequency' in 'Cent'
+-- | Return the closest 'Tone' and the distance to the actual 'Frequency' in 'Cent'.
 fromFrequency :: Tuning -> Frequency -> (Tone , Cent)
 fromFrequency (EqualTemperament a) h = (transpose wholeHs $ Tone 4 A , Cent $ 100 * missingHs)
   where wholeHs = round hs

@@ -1,7 +1,11 @@
 module Polytone ( fromChord
-                , polyMap
-                , polyToList
-                , polyFromList
+                , polytoneEmpty
+                , polytoneSingleton
+                , polytoneToList
+                , polytoneFromList
+                , polytoneInsert
+                , polytoneDelete
+                , polytoneMap
                 ) where
 
 import Note
@@ -33,11 +37,23 @@ ascendingTone prev (n:ns) = prev : ascendingTone next ns
         lower = n :- i
         _ :- i = prev
 
-polyMap :: (Tone -> Tone) -> Polytone -> Polytone
-polyMap f (Polytone s) = Polytone . S.map f $ s
+polytoneEmpty :: Polytone
+polytoneEmpty = Polytone S.empty
 
-polyFromList :: [Tone] -> Polytone
-polyFromList = Polytone . S.fromList
+polytoneSingleton :: Tone -> Polytone
+polytoneSingleton = Polytone . S.singleton
 
-polyToList :: Polytone -> [Tone]
-polyToList (Polytone s) = S.toList s
+polytoneFromList :: [Tone] -> Polytone
+polytoneFromList = Polytone . S.fromList
+
+polytoneToList :: Polytone -> [Tone]
+polytoneToList (Polytone s) = S.toList s
+
+polytoneInsert :: Tone -> Polytone -> Polytone
+polytoneInsert t (Polytone s) = Polytone . S.insert t $ s
+
+polytoneDelete :: Tone -> Polytone -> Polytone
+polytoneDelete t (Polytone s) = Polytone . S.delete t $ s
+
+polytoneMap :: (Tone -> Tone) -> Polytone -> Polytone
+polytoneMap f (Polytone s) = Polytone . S.map f $ s

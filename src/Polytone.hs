@@ -17,6 +17,12 @@ import qualified Data.Set as S
 newtype Polytone = Polytone (S.Set Tone)
   deriving (Read, Eq)
 
+instance Semigroup Polytone where
+  (<>) = polytoneUnion
+
+instance Monoid Polytone where
+  mempty = polytoneEmpty
+
 instance Show Polytone where
   show (Polytone s) = "Polytone " ++ unwords (show <$> S.toList s)
 
@@ -58,3 +64,6 @@ polytoneDelete t (Polytone s) = Polytone . S.delete t $ s
 
 polytoneMap :: (Tone -> Tone) -> Polytone -> Polytone
 polytoneMap f (Polytone s) = Polytone . S.map f $ s
+
+polytoneUnion :: Polytone -> Polytone -> Polytone
+polytoneUnion (Polytone s) (Polytone t) = Polytone $ S.union s t

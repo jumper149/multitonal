@@ -21,7 +21,7 @@ fromChord n c = Polytone . S.fromList $ ascendingTone rootTone rest
 ascendingTone :: Tone -> [Note] -> [Tone]
 ascendingTone prev []     = [ prev ]
 ascendingTone prev (n:ns) = prev : ascendingTone next ns
-  where next = if prev <= lower
+  where next = if prev < lower
                then lower
                else higher
         higher = Tone (i + 1) n

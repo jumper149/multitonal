@@ -1,19 +1,10 @@
 module Interval ( Interval (..)
-                , interval
-                , HalfSteps -- for now
                 , SimpleInterval (..) -- for now
-                , halfSteps -- for now
+                , ratio
+                , simpleRatio -- for now
                 ) where
 
-import Note
-
-type HalfSteps = Integer
-
-octavesToHalfSteps :: OctaveCount -> HalfSteps
-octavesToHalfSteps = (12 *)
-
-data SimpleInterval = Prime
-                    | MinorSecond
+data SimpleInterval = MinorSecond
                     | MajorSecond
                     | MinorThird
                     | MajorThird
@@ -27,33 +18,30 @@ data SimpleInterval = Prime
                     | Octave
   deriving (Read, Show, Eq, Ord, Enum, Bounded)
 
-data Interval = Compound OctaveCount SimpleInterval
+data Interval = Prime
+              | Compound Interval SimpleInterval
   deriving (Read, Eq, Ord)
 
 instance Show Interval where
-  show (Compound n si) = concat (replicate (fromEnum n) octaveStr) ++ show si
-    where octaveStr = show Octave ++ "+"
+  show Prime = "Prime"
+  show (Compound Prime si) = show si
+  show (Compound i si) = show i ++ " + " ++ show si
 
-instance Enum Interval where
-  fromEnum (Compound n si) = fromEnum n * fromEnum (maxBound :: SimpleInterval) + fromEnum si
+simpleRatio :: SimpleInterval -> Rational
+simpleRatio = undefined
 
-  toEnum i = Compound (toEnum n) (toEnum si)
-    where maxSimple = maxBound :: SimpleInterval
-          (n , si) = i `divMod` fromEnum maxSimple
-
-toHalfSteps :: Interval -> HalfSteps
-toHalfSteps = toEnum . fromEnum
-
-fromHalfSteps :: HalfSteps -> Interval
-fromHalfSteps = toEnum . fromEnum
-
-intervalNote :: Note -> Note -> Interval
-intervalNote x y = fromHalfSteps . toEnum $ fromEnum y - fromEnum x
-
-halfSteps :: Tone -> Tone -> HalfSteps
-halfSteps (Tone n x) (Tone m y) = ocHs + hs
-  where hs = toHalfSteps $ intervalNote x y
-        ocHs = octavesToHalfSteps $ m - n
-
-interval :: Tone -> Tone -> Interval
-interval x y = fromHalfSteps $ halfSteps x y
+ratio :: Interval -> Rational
+ratio Prime                          = 1
+ratio (Compound Prime MinorSecond)   = 16/15
+ratio (Compound Prime MajorSecond)   = 9/8
+ratio (Compound Prime MinorThird)    = 6/5
+ratio (Compound Prime MajorThird)    = 5/4
+ratio (Compound Prime PerfectFourth) = 4/3
+ratio (Compound Prime Tritone)       = 45/32
+ratio (Compound Prime PerfectFifth)  = 3/2
+ratio (Compound Prime MinorSixth)    = 8/5
+ratio (Compound Prime MajorSixth)    = 5/3
+ratio (Compound Prime MinorSeventh)  = 7/4
+ratio (Compound Prime MajorSeventh)  = 15/8
+ratio (Compound Prime Octave)        = 2
+ratio _                              = undefined

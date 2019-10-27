@@ -21,7 +21,6 @@ library
                    , Note
                    , Interval
                    , Frequency
-                   , Ratio
                    , Diatonic
                    , Chord
                    , Polytone

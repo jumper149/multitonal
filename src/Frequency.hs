@@ -6,12 +6,11 @@ module Frequency ( Frequency
                  , standardTuning
                  , toFrequency
                  , fromFrequency
-                 , correctCent
+                 , correctCent -- needs Interval (maybe outsource?)
                  ) where
 
 import Note
 import Interval
-import Ratio
 
 -- | Frequency in Hertz.
 newtype Frequency = Hertz Double
@@ -51,8 +50,9 @@ fromFrequency (EqualTemperament a) h = (transpose wholeHs $ Tone 4 A , Cent $ 10
 correctCent :: Tuning -> Tone -> Tone -> Cent
 correctCent t x y = Cent $ 100 * 12 * log quotient / log 2
   where Hertz quotient = xHz / yHz
-        xHz = predictFrequency t (interval x y) x
+        xHz = predictFrequency t i x
         yHz = toFrequency t y
+        i = toEnum $ fromEnum y - fromEnum x -- NEEDS TO BE CHANGED TODO
 
-predictFrequency :: Tuning -> Interval -> Tone -> Frequency
-predictFrequency t i x = (* toFrequency t x) . fromRational . fromInterval $ i
+predictFrequency :: Tuning -> SimpleInterval -> Tone -> Frequency
+predictFrequency t i x = (* toFrequency t x) . fromRational . simpleRatio $ i -- SHOULDNT BE simpleRatio TODO

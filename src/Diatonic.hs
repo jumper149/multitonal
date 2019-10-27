@@ -38,15 +38,15 @@ instance Show Scale where
     where tones = [ s1 , s2 , s3 , s4 , s5 , s6 , s7 ] <*> [ s ]
 
 instance Transposable Scale where
-  mapTone f s = Scale { s1 = t s1
-                      , s2 = t s2
-                      , s3 = t s3
-                      , s4 = t s4
-                      , s5 = t s5
-                      , s6 = t s6
-                      , s7 = t s7
-                      }
-    where t g = mapTone f . g $ s
+  transpose n s = Scale { s1 = t s1
+                        , s2 = t s2
+                        , s3 = t s3
+                        , s4 = t s4
+                        , s5 = t s5
+                        , s6 = t s6
+                        , s7 = t s7
+                        }
+    where t f = transpose n . f $ s
 
 -- | Construct the diatonic 'Scale' from a 'Mode', by giving it's root 'Note'.
 scale :: Mode -> Note -> Scale

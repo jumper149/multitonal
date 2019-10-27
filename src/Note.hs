@@ -5,10 +5,7 @@ module Note ( Transposable (..)
             ) where
 
 class Transposable a where
-  mapTone :: (Tone -> Tone) -> a -> a
-
   transpose :: Int -> a -> a
-  transpose n = mapTone (transpose n)
 
 
 -- | Note on the chromatic scale.
@@ -27,9 +24,6 @@ data Note = C
   deriving (Read, Show, Eq, Ord, Enum, Bounded)
 
 instance Transposable Note where
-  mapTone f n = m
-    where Tone _ m = f $ Tone 0 n
-
   transpose i = toEnum . (`mod` (fromEnum (maxBound :: Note) + 1)) . (+ i) . fromEnum
 
 -- | Note on the chromatic scale with it's regarding octave.
@@ -46,8 +40,6 @@ instance Enum Tone where
     where (octave , tone) = n `divMod` 12
 
 instance Transposable Tone where
-  mapTone = ($)
-
   transpose i = toEnum . (+ i) . fromEnum
 
 type OctaveCount = Integer

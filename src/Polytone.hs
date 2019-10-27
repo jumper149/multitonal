@@ -1,4 +1,4 @@
-module Polytone ( fromChord
+module Polytone ( polytonefromChord
                 , polytoneEmpty
                 , polytoneSingleton
                 , polytoneToList
@@ -20,10 +20,11 @@ newtype Polytone = Polytone (S.Set Tone)
 instance Show Polytone where
   show (Polytone s) = "Polytone " ++ unwords (show <$> S.toList s)
 
-fromChord :: Int      -- ^ octave count
-          -> Chord
-          -> Polytone
-fromChord n c = Polytone . S.fromList $ ascendingTone rootTone rest
+-- | Create a 'Polytone' from a 'Chord'.
+polytonefromChord :: Int      -- ^ octave count
+                  -> Chord
+                  -> Polytone
+polytonefromChord n c = Polytone . S.fromList $ ascendingTone rootTone rest
   where rootTone = root :- n
         Chord (root NE.:| rest) = c
 

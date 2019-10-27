@@ -11,6 +11,7 @@ import Diatonic
 
 import qualified Data.List.NonEmpty as NE
 
+-- | Notes from the diatonic 'Scale' stacked on top of each other.
 newtype Chord = Chord (NE.NonEmpty Note)
   deriving (Read, Eq)
 
@@ -20,6 +21,7 @@ instance Show Chord where
 instance Transposable Chord where
   transpose n (Chord ne) = Chord $ transpose n <$> ne
 
+-- | The relation of a 'Chord' to the tonal centre of a 'Scale'.
 data Function = Tonic
               | Supertonic
               | Mediant

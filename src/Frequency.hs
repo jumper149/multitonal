@@ -54,5 +54,6 @@ correctCent t x y = Cent $ 100 * 12 * log quotient / log 2
         yHz = toFrequency t y
         i = interval $ fromEnum y - fromEnum x -- NEEDS TO BE CHANGED (mapping to all intervals) TODO
 
+-- | Predict the 'Frequency' of 'Tone' bases on the 'Interval' to the given 'Tone'.
 predictFrequency :: Tuning -> Interval -> Tone -> Frequency
 predictFrequency t i x = (* toFrequency t x) . fromRational . ratio $ i

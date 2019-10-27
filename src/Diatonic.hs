@@ -50,6 +50,7 @@ scale m t = Scale { .. }
         halfstepsFromRoot = [ sum . take n $ semisteps | n <- [ 0 .. length semisteps - 1 ] ]
         semisteps = scaleSemisteps m
 
+-- | Returns a list of semisteps that refer to the distances between 'Scale' degrees.
 scaleSemisteps :: Mode -> [Int]
 scaleSemisteps m = take (length ionianHs) . drop (fromEnum m) $ cycle ionianHs
   where ionianHs = [ 2 , 2 , 1 , 2 , 2 , 2 , 1 ]

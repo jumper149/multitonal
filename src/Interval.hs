@@ -32,19 +32,21 @@ simpleRatio MinorSeventh  = 16/9
 simpleRatio MajorSeventh  = 15/8
 simpleRatio Octave        = 2
 
+infixr 5 :+:
+infixr 5 :-:
 data Interval = Prime
-              | Interval :+: SimpleInterval
-              | Interval :-: SimpleInterval
+              | SimpleInterval :+: Interval
+              | SimpleInterval :-: Interval
   deriving (Read, Eq, Ord)
 
 instance Show Interval where
   show Prime = "Prime"
-  show (Prime :+: si) = show si
-  show (Prime :-: si) = show si
-  show (i :+: si) = show i ++ " + " ++ show si
-  show (i :-: si) = show i ++ " - " ++ show si
+  show (si :+: Prime) = show si
+  show (si :-: Prime) = show si
+  show (si :+: i) = show i ++ " + " ++ show si
+  show (si :-: i) = show i ++ " - " ++ show si
 
 ratio :: Interval -> Rational
 ratio Prime = 1
-ratio (i :+: si)   = ratio i * simpleRatio si
-ratio (i :-: si)   = ratio i / simpleRatio si
+ratio (si :+: i)   = ratio i * simpleRatio si
+ratio (si :-: i)   = ratio i / simpleRatio si

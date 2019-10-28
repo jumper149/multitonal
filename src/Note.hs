@@ -27,11 +27,16 @@ instance Transposable Note where
 infix 5 :-
 -- | Note on the chromatic scale with it's regarding octave.
 data Tone = Note :- Int
-  deriving (Read, Eq, Ord)
+  deriving (Read, Eq)
 
 instance Show Tone where
   show (tone :- octave) = show tone ++ (toSubscript <$> show octave)
     where toSubscript = toEnum . (+ fromEnum '₀') . (+ (- fromEnum '0')) . fromEnum
+
+instance Ord Tone where
+  compare (t1 :- o1) (t2 :- o2) = if o1 == o2
+                                  then compare t1 t2
+                                  else compare o1 o2
 
 instance Enum Tone where
   fromEnum (tone :- octave) = 12 * fromEnum octave + fromEnum tone

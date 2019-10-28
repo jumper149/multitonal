@@ -3,8 +3,12 @@ module Note ( Transposable (..)
             , Note (..)
             ) where
 
+-- | A class for types that are based on the chromatic scale.
 class Transposable a where
-  transpose :: Int -> a -> a
+  -- | Transpose the given amount semisteps on the chromatic scale.
+  transpose :: Int -- ^ semisteps
+            -> a
+            -> a
 
 -- | Note on the chromatic scale.
 data Note = C

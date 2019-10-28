@@ -1,4 +1,4 @@
-module Polytone ( polytonefromChord
+module Polytone ( polytoneFromChord
                 , polytoneEmpty
                 , polytoneSingleton
                 , polytoneToList
@@ -24,13 +24,13 @@ instance Monoid Polytone where
   mempty = polytoneEmpty
 
 instance Show Polytone where
-  show (Polytone s) = "Polytone " ++ unwords (show <$> S.toList s)
+  show p = "{" ++ unwords (show <$> polytoneToList p) ++ "}"
 
 -- | Create a 'Polytone' from a 'Chord'.
-polytonefromChord :: Int      -- ^ octave count
+polytoneFromChord :: Int      -- ^ octave count
                   -> Chord
                   -> Polytone
-polytonefromChord n c = Polytone . S.fromList $ ascendingTone rootTone rest
+polytoneFromChord n c = Polytone . S.fromList $ ascendingTone rootTone rest
   where rootTone = root :- n
         Chord (root NE.:| rest) = c
 
@@ -54,7 +54,7 @@ polytoneFromList :: [Tone] -> Polytone
 polytoneFromList = Polytone . S.fromList
 
 polytoneToList :: Polytone -> [Tone]
-polytoneToList (Polytone s) = S.toList s
+polytoneToList (Polytone s) = S.toAscList s
 
 polytoneInsert :: Tone -> Polytone -> Polytone
 polytoneInsert t (Polytone s) = Polytone . S.insert t $ s

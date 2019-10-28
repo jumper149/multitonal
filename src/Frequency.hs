@@ -2,7 +2,7 @@
 
 module Frequency ( Frequency
                  , Cent
-                 , Tuning
+                 , Tuning (..)
                  , standardTuning
                  , toFrequency
                  , fromFrequency
@@ -46,7 +46,7 @@ fromFrequency (EqualTemperament a) h = (transpose wholeHs $ A :- 4 , Cent $ 100 
         hs = 12 * log quotient / log 2
         Hertz quotient = h / a
 
--- | Difference to the actual 'Interval', spanned by two 'Tone's in 'Cent's.
+-- | Difference to the actual 'Interval', spanned by two 'Tone's in 'Cent'.
 correctCent :: Tuning -> Tone -> Tone -> Cent
 correctCent t x y = Cent $ 100 * 12 * log quotient / log 2
   where Hertz quotient = xHz / yHz

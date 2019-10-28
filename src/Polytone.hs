@@ -1,4 +1,5 @@
-module Polytone ( polytoneFromChord
+module Polytone ( Polytone
+                , polytoneFromChord
                 , polytoneEmpty
                 , polytoneSingleton
                 , polytoneToList

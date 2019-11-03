@@ -52,29 +52,32 @@ function f = drop (4 * fromEnum f) accessors
   where accessors = cycle [ s1 , s3 , s5 , s7 , s2 , s4 , s6 ]
 
 prettyShowChord :: Chord -> String
-prettyShowChord c = maybe (show c) ((show root ++) . show) $ chordType c
+prettyShowChord c = either ((show root ++) . show) ((show root ++) . show) $ chordType c
   where Chord (root NE.:| _) = c
 
 data ChordType = MajorTriad
                | MinorTriad
                | MajorSeventh
-               | MinorSeventh
                | DominantSeventh
+               | MinorSeventh
+               | HalfdiminishedSeventh
   deriving (Read, Eq)
 
 instance Show ChordType where
   show MajorTriad = "maj"
   show MinorTriad = "min"
   show MajorSeventh = "maj⁷"
-  show MinorSeventh = "min⁷"
   show DominantSeventh = "dom⁷"
+  show MinorSeventh = "min⁷"
+  show HalfdiminishedSeventh = "hdim⁷"
 
-chordType :: Chord -> Maybe ChordType
+chordType :: Chord -> Either ChordType [Int]
 chordType (Chord (root NE.:| rest))
-  | steps == [ 4 , 7 ] = Just MajorTriad
-  | steps == [ 3 , 7 ] = Just MinorTriad
-  | steps == [ 4 , 7 , 11 ] = Just MajorSeventh
-  | steps == [ 3 , 7 , 10 ] = Just MinorSeventh
-  | steps == [ 4 , 7 , 10 ] = Just DominantSeventh
-  | otherwise = Nothing
+  | steps == [ 4 , 7 ] = Left MajorTriad
+  | steps == [ 3 , 7 ] = Left MinorTriad
+  | steps == [ 4 , 7 , 11 ] = Left MajorSeventh
+  | steps == [ 4 , 7 , 10 ] = Left DominantSeventh
+  | steps == [ 3 , 7 , 10 ] = Left MinorSeventh
+  | steps == [ 3 , 6 , 10 ] = Left HalfdiminishedSeventh
+  | otherwise = Right steps
   where steps = (`mod` (fromEnum (maxBound :: Note) + 1)) . (+ (- fromEnum root)) . fromEnum <$> rest

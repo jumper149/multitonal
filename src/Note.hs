@@ -23,7 +23,21 @@ data Note = C
           | A
           | AB
           | B
-  deriving (Read, Show, Eq, Ord, Enum, Bounded)
+  deriving (Read, Eq, Ord, Enum, Bounded)
+
+instance Show Note where
+  show C = "C"
+  show CD = "C♯"
+  show D = "D"
+  show DE = "D♯"
+  show E = "E"
+  show F = "F"
+  show FG = "F♯"
+  show G = "G"
+  show GA = "G♯"
+  show A = "A"
+  show AB = "A♯"
+  show B = "B"
 
 instance Transposable Note where
   transpose i = toEnum . (`mod` (fromEnum (maxBound :: Note) + 1)) . (+ i) . fromEnum

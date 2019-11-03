@@ -56,7 +56,9 @@ prettyShowChord c = either ((show root ++) . show) ((show root ++) . show) $ cho
   where Chord (root NE.:| _) = c
 
 data ChordType = MajorTriad
+               | AugmentedTriad
                | MinorTriad
+               | DiminishedTriad
                | MajorSeventh
                | DominantSeventh
                | MinorSeventh
@@ -65,7 +67,9 @@ data ChordType = MajorTriad
 
 instance Show ChordType where
   show MajorTriad = "maj"
+  show AugmentedTriad = "aug"
   show MinorTriad = "min"
+  show DiminishedTriad = "dim"
   show MajorSeventh = "maj⁷"
   show DominantSeventh = "dom⁷"
   show MinorSeventh = "min⁷"
@@ -74,7 +78,9 @@ instance Show ChordType where
 chordType :: Chord -> Either ChordType [Int]
 chordType (Chord (root NE.:| rest))
   | steps == [ 4 , 7 ] = Left MajorTriad
+  | steps == [ 4 , 8 ] = Left AugmentedTriad
   | steps == [ 3 , 7 ] = Left MinorTriad
+  | steps == [ 3 , 6 ] = Left DiminishedTriad
   | steps == [ 4 , 7 , 11 ] = Left MajorSeventh
   | steps == [ 4 , 7 , 10 ] = Left DominantSeventh
   | steps == [ 3 , 7 , 10 ] = Left MinorSeventh

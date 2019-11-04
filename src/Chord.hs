@@ -56,13 +56,20 @@ prettyShowChord c = either ((show root ++) . show) ((show root ++) . show) $ cho
   where Chord (root NE.:| _) = c
 
 data ChordType = MajorTriad
-               | AugmentedTriad
+               | AugmentedTriad -- not from Scale
                | MinorTriad
                | DiminishedTriad
+
                | MajorSeventh
                | DominantSeventh
                | MinorSeventh
                | HalfdiminishedSeventh
+
+               | MajorNinth
+               | DominantmajorNinth
+               | MinorNinth
+               | DominantminorNinth
+               | DiminisheddominantminorNinth
   deriving (Read, Eq)
 
 instance Show ChordType where
@@ -70,10 +77,17 @@ instance Show ChordType where
   show AugmentedTriad = "aug"
   show MinorTriad = "min"
   show DiminishedTriad = "dim"
+
   show MajorSeventh = "maj⁷"
   show DominantSeventh = "dom⁷"
   show MinorSeventh = "min⁷"
-  show HalfdiminishedSeventh = "hdim⁷"
+  show HalfdiminishedSeventh = "min⁷♭5"
+
+  show MajorNinth = "maj⁹"
+  show DominantmajorNinth = "dom⁹"
+  show MinorNinth = "min⁹"
+  show DominantminorNinth = "dom⁷♭9"
+  show DiminisheddominantminorNinth =  "dom⁷♭5♭9"
 
 chordType :: Chord -> Either ChordType [Int]
 chordType (Chord (root NE.:| rest))
@@ -81,9 +95,17 @@ chordType (Chord (root NE.:| rest))
   | steps == [ 4 , 8 ] = Left AugmentedTriad
   | steps == [ 3 , 7 ] = Left MinorTriad
   | steps == [ 3 , 6 ] = Left DiminishedTriad
+
   | steps == [ 4 , 7 , 11 ] = Left MajorSeventh
   | steps == [ 4 , 7 , 10 ] = Left DominantSeventh
   | steps == [ 3 , 7 , 10 ] = Left MinorSeventh
   | steps == [ 3 , 6 , 10 ] = Left HalfdiminishedSeventh
+
+  | steps == [ 4 , 7 , 11 , 2 ] = Left MajorNinth
+  | steps == [ 4 , 7 , 10 , 2 ] = Left DominantmajorNinth
+  | steps == [ 3 , 7 , 10 , 2 ] = Left MinorNinth
+  | steps == [ 3 , 7 , 10 , 1 ] = Left DominantminorNinth
+  | steps == [ 3 , 6 , 10 , 1 ] = Left DiminisheddominantminorNinth
+
   | otherwise = Right steps
   where steps = (`mod` (fromEnum (maxBound :: Note) + 1)) . (+ (- fromEnum root)) . fromEnum <$> rest

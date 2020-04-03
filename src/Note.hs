@@ -1,5 +1,3 @@
-{-# LANGUAGE FlexibleInstances #-}
-
 module Note ( Transposable (..)
             , NoteContainer (..)
             , Tone (..)

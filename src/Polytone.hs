@@ -28,6 +28,9 @@ instance Monoid Polytone where
 instance PrettyPrint Polytone where
   pp p = "{" ++ unwords (show <$> polytoneToList p) ++ "}"
 
+instance ToneContainer Polytone where
+  mapTones f (Polytone s) = Polytone $ S.map f s
+
 -- | Create a 'Polytone' from a 'Chord'.
 polytoneFromChord :: Int      -- ^ octave count
                   -> Chord

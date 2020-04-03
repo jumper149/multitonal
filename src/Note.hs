@@ -1,5 +1,6 @@
 module Note ( Transposable (..)
             , NoteContainer (..)
+            , ToneContainer (..)
             , Tone (..)
             , Note (..)
             ) where
@@ -49,6 +50,9 @@ instance Transposable Note where
 class NoteContainer c where
   mapNotes :: (Note -> Note) -> c -> c
 
+instance NoteContainer Note where
+  mapNotes = ($)
+
 infix 5 :-
 -- | Note on the chromatic scale with it's regarding octave.
 data Tone = Note :- Int
@@ -70,3 +74,6 @@ instance Enum Tone where
 
 instance Transposable Tone where
   transpose i = toEnum . (+ i) . fromEnum
+
+class ToneContainer c where
+  mapTones :: (Tone -> Tone) -> c -> c

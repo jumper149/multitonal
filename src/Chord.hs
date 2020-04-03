@@ -4,7 +4,8 @@ module Chord ( Chord
              , seventh
              , ninth
              , stackThirds
-             , prettyShowChord
+             , NamedChord
+             , nameChord
              ) where
 
 import Note
@@ -58,10 +59,6 @@ stackThirds i m f n
 function :: Function -> [Scale -> Note]
 function f = drop (4 * fromEnum f) accessors
   where accessors = cycle [ s1 , s3 , s5 , s7 , s2 , s4 , s6 ]
-
-prettyShowChord :: Chord -> String
-prettyShowChord c = either ((show root ++) . show) ((show root ++) . show) $ chordType c
-  where Chord (root NE.:| _) = c
 
 data ChordType = MajorTriad
                | AugmentedTriad -- not from Scale
@@ -117,3 +114,13 @@ chordType (Chord (root NE.:| rest))
 
   | otherwise = Right steps
   where steps = (`mod` (fromEnum (maxBound :: Note) + 1)) . (+ (- fromEnum root)) . fromEnum <$> rest
+
+data NamedChord = NamedChord Note ChordType
+  deriving (Eq, Read, Show)
+
+instance PrettyPrint NamedChord where
+  pp (NamedChord n c) = pp n <> pp c
+
+nameChord :: Chord -> Maybe NamedChord
+nameChord c = either (Just . NamedChord root) (const Nothing) . chordType $ c
+  where Chord (root NE.:| _) = c

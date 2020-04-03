@@ -11,24 +11,25 @@ module Frequency ( Frequency
 
 import Note
 import Interval
+import PrettyPrint
 
 -- | Frequency in Hertz.
 newtype Frequency = Hertz Double
-  deriving (Read, Eq, Ord, Num, Fractional, Floating, Real, RealFrac)
+  deriving (Eq, Read, Show, Ord, Num, Fractional, Floating, Real, RealFrac)
 
-instance Show Frequency where
-  show f = (show . (round :: Frequency -> Integer)) f ++ "Hz"
+instance PrettyPrint Frequency where
+  pp f = (show . (round :: Frequency -> Integer)) f ++ "Hz"
 
 -- | Hundreths of semisteps on the chromatic scale.
 newtype Cent = Cent Double
-  deriving (Read, Eq, Ord, Num, Fractional, Floating, Real, RealFrac)
+  deriving (Eq, Read, Show, Ord, Num, Fractional, Floating, Real, RealFrac)
 
-instance Show Cent where
-  show ct = (show . (round :: Cent -> Integer)) ct ++ "ct"
+instance PrettyPrint Cent where
+  pp ct = (show . (round :: Cent -> Integer)) ct ++ "ct"
 
 -- | Intonation of each Tone on the chromatic scale.
 newtype Tuning = EqualTemperament Frequency -- ^ equal temperament with concert pitch given by the 'Frequency' of @A₄@
-  deriving (Read, Show, Eq)
+  deriving (Eq, Read, Show)
 
 standardTuning :: Tuning
 standardTuning = EqualTemperament 440

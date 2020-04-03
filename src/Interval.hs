@@ -4,6 +4,8 @@ module Interval ( Interval (..)
                 , interval
                 ) where
 
+import PrettyPrint
+
 data SimpleInterval = MinorSecond
                     | MajorSecond
                     | MinorThird
@@ -17,6 +19,9 @@ data SimpleInterval = MinorSecond
                     | MajorSeventh
                     | Octave
   deriving (Read, Show, Eq, Ord, Enum, Bounded)
+
+instance PrettyPrint SimpleInterval where
+  pp = show
 
 -- from https://en.wikipedia.org/wiki/Interval_(music)#Size_of_intervals_used_in_different_tuning_systems
 simpleRatio :: SimpleInterval -> Rational
@@ -38,14 +43,14 @@ infixl 5 :-:
 data Interval = Prime
               | Interval :+: SimpleInterval
               | Interval :-: SimpleInterval
-  deriving (Read, Eq, Ord)
+  deriving (Eq, Read, Show, Ord)
 
-instance Show Interval where
-  show Prime = "Prime"
-  show (Prime :+: si) = show si
-  show (Prime :-: si) = '-' : show si
-  show (i :+: si) = show i ++ "+" ++ show si
-  show (i :-: si) = show i ++ "-" ++ show si
+instance PrettyPrint Interval where
+  pp Prime = "Prime"
+  pp (Prime :+: si) = pp si
+  pp (Prime :-: si) = '-' : pp si
+  pp (i :+: si) = pp i ++ "+" ++ pp si
+  pp (i :-: si) = pp i ++ "-" ++ pp si
 
 ratio :: Interval -> Rational
 ratio Prime = 1

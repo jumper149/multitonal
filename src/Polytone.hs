@@ -11,12 +11,13 @@ module Polytone ( Polytone
 
 import Note
 import Chord
+import PrettyPrint
 
 import qualified Data.List.NonEmpty as NE
 import qualified Data.Set as S
 
 newtype Polytone = Polytone (S.Set Tone)
-  deriving (Read, Eq)
+  deriving (Eq, Read, Show)
 
 instance Semigroup Polytone where
   (<>) = polytoneUnion
@@ -24,8 +25,8 @@ instance Semigroup Polytone where
 instance Monoid Polytone where
   mempty = polytoneEmpty
 
-instance Show Polytone where
-  show p = "{" ++ unwords (show <$> polytoneToList p) ++ "}"
+instance PrettyPrint Polytone where
+  pp p = "{" ++ unwords (show <$> polytoneToList p) ++ "}"
 
 -- | Create a 'Polytone' from a 'Chord'.
 polytoneFromChord :: Int      -- ^ octave count

@@ -9,18 +9,22 @@ module Chord ( Chord (..)
 
 import Note
 import Diatonic
+import PrettyPrint
 
 import qualified Data.List.NonEmpty as NE
 
 -- | Notes from the diatonic 'Scale' stacked on top of each other.
 newtype Chord = Chord (NE.NonEmpty Note)
-  deriving (Read, Eq)
+  deriving (Eq, Read, Show)
 
-instance Show Chord where
-  show (Chord ne) = "Chord " ++ unwords (show <$> NE.toList ne)
+instance PrettyPrint Chord where
+  pp (Chord ne) = "Chord " ++ unwords (pp <$> NE.toList ne)
+
+instance NoteContainer Chord where
+  mapNotes f (Chord ne) = Chord $ f <$> ne
 
 instance Transposable Chord where
-  transpose n (Chord ne) = Chord $ transpose n <$> ne
+  transpose n = mapNotes $ transpose n
 
 -- | The relation of a 'Chord' to the tonal centre of a 'Scale'.
 data Function = Tonic
@@ -30,7 +34,10 @@ data Function = Tonic
               | Dominant
               | Submediant
               | Leading
-  deriving (Read, Show, Eq, Ord, Enum, Bounded)
+  deriving (Eq, Ord, Read, Show, Enum, Bounded)
+
+instance PrettyPrint Function where
+  pp = show
 
 triad :: Mode -> Function -> Note -> Chord
 triad = stackThirds 3
@@ -70,24 +77,24 @@ data ChordType = MajorTriad
                | MinorNinth
                | DominantminorNinth
                | DiminisheddominantminorNinth
-  deriving (Read, Eq)
+  deriving (Eq, Read, Show)
 
-instance Show ChordType where
-  show MajorTriad = "maj"
-  show AugmentedTriad = "aug"
-  show MinorTriad = "min"
-  show DiminishedTriad = "dim"
+instance PrettyPrint ChordType where
+  pp MajorTriad = "maj"
+  pp AugmentedTriad = "aug"
+  pp MinorTriad = "min"
+  pp DiminishedTriad = "dim"
 
-  show MajorSeventh = "maj⁷"
-  show DominantSeventh = "dom⁷"
-  show MinorSeventh = "min⁷"
-  show HalfdiminishedSeventh = "min⁷♭5"
+  pp MajorSeventh = "maj⁷"
+  pp DominantSeventh = "dom⁷"
+  pp MinorSeventh = "min⁷"
+  pp HalfdiminishedSeventh = "min⁷♭5"
 
-  show MajorNinth = "maj⁹"
-  show DominantmajorNinth = "dom⁹"
-  show MinorNinth = "min⁹"
-  show DominantminorNinth = "dom⁷♭9"
-  show DiminisheddominantminorNinth =  "dom⁷♭5♭9"
+  pp MajorNinth = "maj⁹"
+  pp DominantmajorNinth = "dom⁹"
+  pp MinorNinth = "min⁹"
+  pp DominantminorNinth = "dom⁷♭9"
+  pp DiminisheddominantminorNinth =  "dom⁷♭5♭9"
 
 chordType :: Chord -> Either ChordType [Int]
 chordType (Chord (root NE.:| rest))

@@ -1,7 +1,12 @@
+{-# LANGUAGE FlexibleInstances #-}
+
 module Note ( Transposable (..)
+            , NoteContainer (..)
             , Tone (..)
             , Note (..)
             ) where
+
+import PrettyPrint
 
 -- | A class for types that are based on the chromatic scale.
 class Transposable a where
@@ -23,43 +28,47 @@ data Note = C
           | A
           | AB
           | B
-  deriving (Read, Eq, Ord, Enum, Bounded)
+  deriving (Eq, Read, Show, Ord, Enum, Bounded)
 
-instance Show Note where
-  show C = "C"
-  show CD = "C♯"
-  show D = "D"
-  show DE = "D♯"
-  show E = "E"
-  show F = "F"
-  show FG = "F♯"
-  show G = "G"
-  show GA = "G♯"
-  show A = "A"
-  show AB = "A♯"
-  show B = "B"
+instance PrettyPrint Note where
+  pp C = "C"
+  pp CD = "C♯"
+  pp D = "D"
+  pp DE = "D♯"
+  pp E = "E"
+  pp F = "F"
+  pp FG = "F♯"
+  pp G = "G"
+  pp GA = "G♯"
+  pp A = "A"
+  pp AB = "A♯"
+  pp B = "B"
 
 instance Transposable Note where
   transpose i = toEnum . (`mod` (fromEnum (maxBound :: Note) + 1)) . (+ i) . fromEnum
 
+-- | A class for data containing notes.
+class NoteContainer c where
+  mapNotes :: (Note -> Note) -> c -> c
+
 infix 5 :-
 -- | Note on the chromatic scale with it's regarding octave.
 data Tone = Note :- Int
-  deriving (Read, Eq)
+  deriving (Eq, Read, Show)
 
-instance Show Tone where
-  show (tone :- octave) = show tone ++ (toSubscript <$> show octave)
+instance PrettyPrint Tone where
+  pp (note :- octave) = pp note ++ (toSubscript <$> show octave)
     where toSubscript = toEnum . (+ fromEnum '₀') . (+ (- fromEnum '0')) . fromEnum
 
 instance Ord Tone where
-  compare (t1 :- o1) (t2 :- o2) = if o1 == o2
-                                  then compare t1 t2
+  compare (n1 :- o1) (n2 :- o2) = if o1 == o2
+                                  then compare n1 n2
                                   else compare o1 o2
 
 instance Enum Tone where
-  fromEnum (tone :- octave) = 12 * fromEnum octave + fromEnum tone
-  toEnum n = toEnum tone :- toEnum octave
-    where (octave , tone) = n `divMod` 12
+  fromEnum (note :- octave) = 12 * fromEnum octave + fromEnum note
+  toEnum n = toEnum note :- toEnum octave
+    where (octave , note) = n `divMod` 12
 
 instance Transposable Tone where
   transpose i = toEnum . (+ i) . fromEnum

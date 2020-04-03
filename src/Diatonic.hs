@@ -6,6 +6,7 @@ module Diatonic ( Mode (..)
                 ) where
 
 import Note
+import PrettyPrint
 
 -- | Mode of a diatonic scale.
 data Mode = Ionian
@@ -15,7 +16,10 @@ data Mode = Ionian
           | Mixolydian
           | Aeolian
           | Locrian
-  deriving (Read, Show, Eq, Ord, Enum, Bounded)
+  deriving (Eq, Ord, Read, Show, Enum, Bounded)
+
+instance PrettyPrint Mode where
+  pp = show
 
 -- | Diatonic scale.
 data Scale = Scale { s1 :: Note
@@ -26,22 +30,24 @@ data Scale = Scale { s1 :: Note
                    , s6 :: Note
                    , s7 :: Note
                    }
-  deriving (Read, Eq)
+  deriving (Eq, Read, Show)
 
-instance Show Scale where
-  show s = unwords $ "Scale" : (show <$> tones)
-    where tones = [ s1 , s2 , s3 , s4 , s5 , s6 , s7 ] <*> [ s ]
+instance PrettyPrint Scale where
+  pp s = unwords $ "Scale" : (pp <$> notes)
+    where notes = [ s1 , s2 , s3 , s4 , s5 , s6 , s7 ] <*> pure s
+
+instance NoteContainer Scale where
+  mapNotes f s = Scale { s1 = f $ s1 s
+                       , s2 = f $ s2 s
+                       , s3 = f $ s3 s
+                       , s4 = f $ s4 s
+                       , s5 = f $ s5 s
+                       , s6 = f $ s6 s
+                       , s7 = f $ s7 s
+                       }
 
 instance Transposable Scale where
-  transpose n s = Scale { s1 = t s1
-                        , s2 = t s2
-                        , s3 = t s3
-                        , s4 = t s4
-                        , s5 = t s5
-                        , s6 = t s6
-                        , s7 = t s7
-                        }
-    where t f = transpose n . f $ s
+  transpose n = mapNotes $ transpose n
 
 -- | Construct the diatonic 'Scale' from a 'Mode', by giving it's root 'Note'.
 scale :: Mode -> Note -> Scale

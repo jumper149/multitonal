@@ -1,4 +1,4 @@
-module Chord ( Chord (..)
+module Chord ( Chord
              , Function (..)
              , triad
              , seventh
@@ -18,10 +18,11 @@ newtype Chord = Chord (NE.NonEmpty Note)
   deriving (Eq, Read, Show)
 
 instance PrettyPrint Chord where
-  pp (Chord ne) = "Chord " ++ unwords (pp <$> NE.toList ne)
+  pp c = "Chord " ++ unwords (pp <$> listNotes c)
 
 instance NoteContainer Chord where
   mapNotes f (Chord ne) = Chord $ f <$> ne
+  listNotes (Chord ne) = NE.toList ne
 
 instance Transposable Chord where
   transpose n = mapNotes $ transpose n

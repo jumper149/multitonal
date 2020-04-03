@@ -13,7 +13,6 @@ import Note
 import Chord
 import PrettyPrint
 
-import qualified Data.List.NonEmpty as NE
 import qualified Data.Set as S
 
 newtype Polytone = Polytone (S.Set Tone)
@@ -37,7 +36,7 @@ polytoneFromChord :: Int      -- ^ octave count
                   -> Polytone
 polytoneFromChord n c = Polytone . S.fromList $ ascendingTone rootTone rest
   where rootTone = root :- n
-        Chord (root NE.:| rest) = c
+        root:rest = listNotes c
 
 ascendingTone :: Tone -> [Note] -> [Tone]
 ascendingTone prev []     = [ prev ]

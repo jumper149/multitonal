@@ -33,8 +33,7 @@ data Scale = Scale { s1 :: Note
   deriving (Eq, Read, Show)
 
 instance PrettyPrint Scale where
-  pp s = unwords $ "Scale" : (pp <$> notes)
-    where notes = [ s1 , s2 , s3 , s4 , s5 , s6 , s7 ] <*> pure s
+  pp s = unwords $ "Scale" : (pp <$> listNotes s)
 
 instance NoteContainer Scale where
   mapNotes f s = Scale { s1 = f $ s1 s
@@ -45,6 +44,7 @@ instance NoteContainer Scale where
                        , s6 = f $ s6 s
                        , s7 = f $ s7 s
                        }
+  listNotes s = [ s1 , s2 , s3 , s4 , s5 , s6 , s7 ] <*> pure s
 
 instance Transposable Scale where
   transpose n = mapNotes $ transpose n

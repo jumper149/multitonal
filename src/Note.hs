@@ -49,9 +49,11 @@ instance Transposable Note where
 -- | A class for data containing notes.
 class NoteContainer c where
   mapNotes :: (Note -> Note) -> c -> c
+  listNotes :: c -> [Note]
 
 instance NoteContainer Note where
   mapNotes = ($)
+  listNotes = pure
 
 infix 5 :-
 -- | Note on the chromatic scale with it's regarding octave.
